@@ -39,7 +39,10 @@
             grid-template-columns: repeat(10, 1fr);
             gap: 5px;
             max-width: 600px;
-            background-color: #d2b48c;
+            background-color: #d2b48c; /* ディスプレイと同じ色 */
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
         .key {
             background-color: #ddd;
@@ -53,12 +56,26 @@
         .key:active {
             background-color: #bbb;
         }
+        .power-button {
+            margin: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .power-button.off {
+            background-color: #f44336;
+        }
     </style>
 </head>
 <body>
     <div class="box">
-        <iframe src="https://win11.blueedge.me" title="Custom OS" allowfullscreen></iframe>
+        <iframe id="display" src="https://sakalt.github.io/boxpc/os.html" title="Custom OS" allowfullscreen></iframe>
     </div>
+    <button class="power-button" id="powerButton">電源オン</button>
     <div class="keyboard">
         <div class="key">Q</div>
         <div class="key">W</div>
@@ -70,10 +87,27 @@
         <div class="key">I</div>
         <div class="key">O</div>
         <div class="key">P</div>
-        <!-- 必要に応じて他のキーも追加 -->
+        <!-- 他のキーも追加可能 -->
     </div>
 
     <script>
+        const powerButton = document.getElementById('powerButton');
+        const display = document.getElementById('display');
+        let isOn = true;
+
+        powerButton.addEventListener('click', () => {
+            if (isOn) {
+                display.style.display = 'none';
+                powerButton.textContent = '電源オン';
+                powerButton.classList.add('off');
+            } else {
+                display.style.display = 'block';
+                powerButton.textContent = '電源オフ';
+                powerButton.classList.remove('off');
+            }
+            isOn = !isOn;
+        });
+
         document.querySelectorAll('.key').forEach(key => {
             key.addEventListener('click', () => {
                 alert(`Key ${key.textContent} pressed`);
