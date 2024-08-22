@@ -17,8 +17,8 @@
         .box {
             width: 80%;
             max-width: 800px;
-            height: 60%;
-            max-height: 600px;
+            height: 70%;
+            max-height: 700px;
             border: 2px solid #8b4513;
             background-color: #d2b48c;
             border-radius: 10px;
@@ -27,13 +27,26 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            margin-bottom: 20px;
-            padding-bottom: 50px; /* キーボード部分のスペース */
+            padding-bottom: 60px; /* キーボードのスペース */
         }
         .box iframe {
             width: 100%;
-            height: 100%;
+            height: calc(100% - 60px); /* キーボードのスペースを引く */
             border: none;
+        }
+        .power-button {
+            position: absolute;
+            bottom: 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .power-button.off {
+            background-color: #f44336;
         }
         .keyboard {
             display: grid;
@@ -46,9 +59,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             position: absolute;
-            bottom: 10px; /* 下部に配置 */
-            left: 50%;
-            transform: translateX(-50%);
+            bottom: 0; /* ディスプレイと接触 */
         }
         .key {
             background-color: #ddd;
@@ -62,26 +73,13 @@
         .key:active {
             background-color: #bbb;
         }
-        .power-button {
-            margin: 20px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .power-button.off {
-            background-color: #f44336;
-        }
     </style>
 </head>
 <body>
     <div class="box">
         <iframe id="display" src="https://win11.blueedge.me" title="Custom OS" allowfullscreen></iframe>
+        <button class="power-button" id="powerButton">電源オフ</button>
         <div class="keyboard">
-            <button class="power-button" id="powerButton">電源オン</button>
             <div class="key">Q</div>
             <div class="key">W</div>
             <div class="key">E</div>
@@ -95,6 +93,7 @@
             <!-- 他のキーも追加可能 -->
         </div>
     </div>
+
     <script>
         const powerButton = document.getElementById('powerButton');
         const display = document.getElementById('display');
