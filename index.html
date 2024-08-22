@@ -24,10 +24,11 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             position: relative;
             margin-bottom: 20px;
+            padding-bottom: 50px; /* キーボード部分のスペース */
         }
         .box iframe {
             width: 100%;
@@ -38,11 +39,16 @@
             display: grid;
             grid-template-columns: repeat(10, 1fr);
             gap: 5px;
+            width: calc(100% - 20px); /* 左右のパディングを引く */
             max-width: 600px;
             background-color: #d2b48c; /* ディスプレイと同じ色 */
             padding: 10px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            bottom: 10px; /* 下部に配置 */
+            left: 50%;
+            transform: translateX(-50%);
         }
         .key {
             background-color: #ddd;
@@ -73,23 +79,22 @@
 </head>
 <body>
     <div class="box">
-        <iframe id="display" src="https://sakalt.github.io/boxpc/os.html" title="Custom OS" allowfullscreen></iframe>
+        <iframe id="display" src="https://win11.blueedge.me" title="Custom OS" allowfullscreen></iframe>
+        <div class="keyboard">
+            <button class="power-button" id="powerButton">電源オン</button>
+            <div class="key">Q</div>
+            <div class="key">W</div>
+            <div class="key">E</div>
+            <div class="key">R</div>
+            <div class="key">T</div>
+            <div class="key">Y</div>
+            <div class="key">U</div>
+            <div class="key">I</div>
+            <div class="key">O</div>
+            <div class="key">P</div>
+            <!-- 他のキーも追加可能 -->
+        </div>
     </div>
-    <button class="power-button" id="powerButton">電源オン</button>
-    <div class="keyboard">
-        <div class="key">Q</div>
-        <div class="key">W</div>
-        <div class="key">E</div>
-        <div class="key">R</div>
-        <div class="key">T</div>
-        <div class="key">Y</div>
-        <div class="key">U</div>
-        <div class="key">I</div>
-        <div class="key">O</div>
-        <div class="key">P</div>
-        <!-- 他のキーも追加可能 -->
-    </div>
-
     <script>
         const powerButton = document.getElementById('powerButton');
         const display = document.getElementById('display');
