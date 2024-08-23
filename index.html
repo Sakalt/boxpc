@@ -66,14 +66,20 @@
             color: #fff;
             border: 1px solid #222;
             border-radius: 5px;
-            padding: 15px;
+            padding: 10px;
             text-align: center;
             cursor: pointer;
             user-select: none;
-            font-size: 14px;
+            font-size: 12px; /* キーを少し小さくする */
         }
         .key:active {
             background-color: #555;
+        }
+        textarea, input {
+            width: calc(100% - 20px);
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -110,7 +116,7 @@
             <div class="key" data-key="N">N</div>
             <div class="key" data-key="M">M</div>
             <div class="key" data-key="ENTER">Enter</div>
-            <div class="key" data-key=" "> </div>
+            <div class="key" data-key="SPACE">Space</div>
             <div class="key" data-key="BACKSPACE">Backspace</div>
             <!-- 他のキーも追加可能 -->
         </div>
@@ -152,6 +158,17 @@
                     }, 100);
                 }
             });
+
+            // テキストエリアや入力フォームに文字を挿入
+            const activeElement = document.activeElement;
+            if (activeElement.tagName === 'TEXTAREA' || (activeElement.tagName === 'INPUT' && activeElement.type === 'text')) {
+                const cursorPos = activeElement.selectionStart;
+                const value = activeElement.value;
+                const newValue = value.slice(0, cursorPos) + event.key + value.slice(cursorPos);
+                activeElement.value = newValue;
+                activeElement.selectionStart = cursorPos + 1;
+                activeElement.selectionEnd = cursorPos + 1;
+            }
         });
     </script>
 </body>
