@@ -27,16 +27,16 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            padding-bottom: 150px; /* キーボードと操作部品のスペースを増やす */
         }
         .box iframe {
             width: 100%;
-            height: calc(100% - 150px); /* キーボードと操作部品のスペースを引く */
+            height: calc(100% - 150px); /* キーボードの高さを考慮 */
             border: none;
         }
         .power-button {
             position: absolute;
-            bottom: 120px; /* キーボードの上に配置 */
+            top: 10px; /* 上部に配置 */
+            right: 10px;
             padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
@@ -59,7 +59,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             position: absolute;
-            bottom: 90px; /* 電源ボタンの上に配置 */
+            bottom: 0; /* ボックスの下部に配置 */
         }
         .key {
             background-color: #333; /* 黒に近いグレー */
@@ -83,19 +83,19 @@
         .speaker {
             width: 60px;
             height: 20px;
-            bottom: 70px;
+            bottom: 60px; /* キーボードの上に配置 */
             background-color: #666;
         }
         .trackpad {
             width: 100px;
             height: 60px;
-            bottom: 10px;
+            bottom: 10px; /* キーボードの下に配置 */
             background-color: #444;
         }
         .display-cable {
             width: 10px;
             height: 100px;
-            bottom: 70px;
+            bottom: 60px; /* スピーカーの下に配置 */
             background-color: #555;
             left: 50%;
             transform: translateX(-50%);
