@@ -17,7 +17,7 @@
         .box {
             width: 80%;
             max-width: 800px;
-            height: 70%;
+            height: 80%;
             max-height: 700px;
             border: 2px solid #8b4513;
             background-color: #d2b48c;
@@ -27,16 +27,16 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            padding-bottom: 60px; /* キーボードのスペース */
+            padding-bottom: 80px; /* キーボードのスペース */
         }
         .box iframe {
             width: 100%;
-            height: calc(100% - 60px); /* キーボードのスペースを引く */
+            height: calc(100% - 80px); /* キーボードのスペースを引く */
             border: none;
         }
         .power-button {
             position: absolute;
-            bottom: 10px;
+            bottom: 90px;
             padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
@@ -50,11 +50,11 @@
         }
         .keyboard {
             display: grid;
-            grid-template-columns: repeat(10, 1fr);
+            grid-template-columns: repeat(15, 1fr);
             gap: 5px;
             width: calc(100% - 20px); /* 左右のパディングを引く */
-            max-width: 600px;
-            background-color: #d2b48c; /* ディスプレイと同じ色 */
+            max-width: 700px;
+            background-color: #000; /* 黒色 */
             padding: 10px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -62,34 +62,56 @@
             bottom: 0; /* ディスプレイと接触 */
         }
         .key {
-            background-color: #ddd;
-            border: 1px solid #aaa;
+            background-color: #333; /* 黒に近いグレー */
+            color: #fff;
+            border: 1px solid #222;
             border-radius: 5px;
             padding: 15px;
             text-align: center;
             cursor: pointer;
             user-select: none;
+            font-size: 14px;
         }
         .key:active {
-            background-color: #bbb;
+            background-color: #555;
         }
     </style>
 </head>
 <body>
     <div class="box">
-        <iframe id="display" src="https://win11.blueedge.me" title="Custom OS" allowfullscreen></iframe>
+        <iframe id="display" src="https://win11.blueedge.me" title="Windows 11" allowfullscreen></iframe>
+        <button class="power-button" id="powerButton">電源オフ</button>
         <div class="keyboard">
-            <button class="power-button" id="powerButton">電源オフ</button>
-            <div class="key">Q</div>
-            <div class="key">W</div>
-            <div class="key">E</div>
-            <div class="key">R</div>
-            <div class="key">T</div>
-            <div class="key">Y</div>
-            <div class="key">U</div>
-            <div class="key">I</div>
-            <div class="key">O</div>
-            <div class="key">P</div>
+            <!-- キーを全て追加 -->
+            <div class="key" data-key="Q">Q</div>
+            <div class="key" data-key="W">W</div>
+            <div class="key" data-key="E">E</div>
+            <div class="key" data-key="R">R</div>
+            <div class="key" data-key="T">T</div>
+            <div class="key" data-key="Y">Y</div>
+            <div class="key" data-key="U">U</div>
+            <div class="key" data-key="I">I</div>
+            <div class="key" data-key="O">O</div>
+            <div class="key" data-key="P">P</div>
+            <div class="key" data-key="A">A</div>
+            <div class="key" data-key="S">S</div>
+            <div class="key" data-key="D">D</div>
+            <div class="key" data-key="F">F</div>
+            <div class="key" data-key="G">G</div>
+            <div class="key" data-key="H">H</div>
+            <div class="key" data-key="J">J</div>
+            <div class="key" data-key="K">K</div>
+            <div class="key" data-key="L">L</div>
+            <div class="key" data-key="Z">Z</div>
+            <div class="key" data-key="X">X</div>
+            <div class="key" data-key="C">C</div>
+            <div class="key" data-key="V">V</div>
+            <div class="key" data-key="B">B</div>
+            <div class="key" data-key="N">N</div>
+            <div class="key" data-key="M">M</div>
+            <div class="key" data-key="ENTER">Enter</div>
+            <div class="key" data-key=" "> </div>
+            <div class="key" data-key="BACKSPACE">Backspace</div>
             <!-- 他のキーも追加可能 -->
         </div>
     </div>
@@ -114,8 +136,21 @@
 
         document.querySelectorAll('.key').forEach(key => {
             key.addEventListener('click', () => {
-                alert(`Key ${key.textContent} pressed`);
-                // 実際の処理をここに追加
+                const keyValue = key.dataset.key;
+                const event = new KeyboardEvent('keydown', { key: keyValue });
+                document.dispatchEvent(event);
+            });
+        });
+
+        document.addEventListener('keydown', (event) => {
+            const key = event.key.toUpperCase();
+            document.querySelectorAll('.key').forEach(keyElement => {
+                if (keyElement.dataset.key === key) {
+                    keyElement.style.backgroundColor = '#555';
+                    setTimeout(() => {
+                        keyElement.style.backgroundColor = '#333';
+                    }, 100);
+                }
             });
         });
     </script>
