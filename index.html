@@ -170,6 +170,28 @@
                 activeElement.selectionEnd = cursorPos + 1;
             }
         });
+
+        // テキストエリアや入力フォームにフォーカスがある時に、キー入力を処理するためのイベントリスナー
+        document.querySelectorAll('textarea, input').forEach(element => {
+            element.addEventListener('focus', () => {
+                element.addEventListener('keydown', handleKeydown);
+            });
+            element.addEventListener('blur', () => {
+                element.removeEventListener('keydown', handleKeydown);
+            });
+        });
+
+        function handleKeydown(event) {
+            const key = event.key.toUpperCase();
+            document.querySelectorAll('.key').forEach(keyElement => {
+                if (keyElement.dataset.key === key) {
+                    keyElement.style.backgroundColor = '#555';
+                    setTimeout(() => {
+                        keyElement.style.backgroundColor = '#333';
+                    }, 100);
+                }
+            });
+        }
     </script>
 </body>
 </html>
