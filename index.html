@@ -27,16 +27,16 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            padding-bottom: 100px; /* キーボードと操作部品のスペース */
+            padding-bottom: 150px; /* キーボードと操作部品のスペースを増やす */
         }
         .box iframe {
             width: 100%;
-            height: calc(100% - 100px); /* キーボードと操作部品のスペースを引く */
+            height: calc(100% - 150px); /* キーボードと操作部品のスペースを引く */
             border: none;
         }
         .power-button {
             position: absolute;
-            bottom: 110px;
+            bottom: 120px; /* キーボードの上に配置 */
             padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
@@ -59,7 +59,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             position: absolute;
-            bottom: 50px; /* ディスプレイと接触させるために少し上げる */
+            bottom: 70px; /* 電源ボタンの上に配置 */
         }
         .key {
             background-color: #333; /* 黒に近いグレー */
