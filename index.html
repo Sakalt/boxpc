@@ -27,16 +27,16 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            padding-bottom: 80px; /* キーボードのスペース */
+            padding-bottom: 100px; /* キーボードと操作部品のスペース */
         }
         .box iframe {
             width: 100%;
-            height: calc(100% - 80px); /* キーボードのスペースを引く */
+            height: calc(100% - 100px); /* キーボードと操作部品のスペースを引く */
             border: none;
         }
         .power-button {
             position: absolute;
-            bottom: 90px;
+            bottom: 110px;
             padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
@@ -66,7 +66,7 @@
             color: #fff;
             border: 1px solid #222;
             border-radius: 5px;
-            padding: 10px;
+            padding: 8px; /* 小さくする */
             text-align: center;
             cursor: pointer;
             user-select: none;
@@ -74,6 +74,31 @@
         }
         .key:active {
             background-color: #555;
+        }
+        .speaker, .trackpad, .display-cable {
+            position: absolute;
+            background-color: #333;
+            border-radius: 5px;
+        }
+        .speaker {
+            width: 60px;
+            height: 20px;
+            bottom: 70px;
+            background-color: #666;
+        }
+        .trackpad {
+            width: 100px;
+            height: 60px;
+            bottom: 10px;
+            background-color: #444;
+        }
+        .display-cable {
+            width: 10px;
+            height: 100px;
+            bottom: 70px;
+            background-color: #555;
+            left: 50%;
+            transform: translateX(-50%);
         }
         textarea, input {
             width: calc(100% - 20px);
@@ -120,6 +145,9 @@
             <div class="key" data-key="BACKSPACE">Backspace</div>
             <!-- 他のキーも追加可能 -->
         </div>
+        <div class="speaker"></div>
+        <div class="trackpad"></div>
+        <div class="display-cable"></div>
     </div>
 
     <script>
