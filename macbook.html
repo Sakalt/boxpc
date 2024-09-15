@@ -25,8 +25,8 @@
         .box {
             width: 80%;
             max-width: 800px;
-            height: 95%; /* 高さを少し大きく */
-            max-height: 900px; /* 高さを少し大きく */
+            height: 95%;
+            max-height: 900px;
             border: 2px solid #c0c0c0;
             background-color: #ffffff;
             border-radius: 20px;
@@ -35,20 +35,19 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            padding-top: 50px; /* MacBook Airの文字のスペースを確保 */
+            padding-top: 50px;
         }
         .box iframe {
-            width: 90%; /* ディスプレイをボディ内に少し収める */
-            height: calc(100% - 250px); /* 縦スペースを調整 */
+            width: 90%;
+            height: calc(100% - 300px); /* キーボードとMacBook Airの文字の間にディスプレイを合わせる */
             border: none;
             border-radius: 15px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             background-color: #000;
         }
-        .power-button {
+        .power-button, .light-button {
             position: absolute;
             top: 10px;
-            right: 10px;
             padding: 10px 20px;
             background-color: #007aff;
             color: white;
@@ -56,6 +55,12 @@
             border-radius: 10px;
             cursor: pointer;
             font-size: 16px;
+        }
+        .power-button {
+            right: 10px;
+        }
+        .light-button {
+            left: 10px;
         }
         .power-button.off {
             background-color: #ff3b30;
@@ -84,13 +89,17 @@
             cursor: pointer;
             user-select: none;
             font-size: 14px;
+            transition: box-shadow 0.3s;
         }
         .key:active {
             background-color: #555;
         }
-        .light-on .keyboard {
-            background-color: #111; /* 背景を暗くする */
-            box-shadow: 0 0 20px rgba(255, 255, 0, 0.8); /* 光を表現 */
+        .light-on .key {
+            box-shadow: 0 0 15px 5px white; /* キーの周りに白色の光を追加 */
+        }
+        .light-on .key:active {
+            background-color: #777; /* ライトオン時のキーアクティブの色変更 */
+            box-shadow: 0 0 20px 10px white inset; /* 光がさらに強くなる */
         }
         .speaker, .trackpad, .display-cable {
             position: absolute;
@@ -119,11 +128,12 @@
         }
         .label {
             position: absolute;
-            top: 20px; /* MacBook Airの文字を上に */
+            top: calc(100% - 370px); /* キーボードとディスプレイの間に文字を表示 */
             font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            font-size: 36px;
+            font-size: 24px;
             color: #333;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            pointer-events: none; /* 文字がクリックされないようにする */
         }
         textarea, input {
             width: calc(100% - 20px);
@@ -138,7 +148,9 @@
     <div class="box" id="macbook">
         <iframe id="display" src="https://mhmdmhd6.github.io/Mac-OS-Desktop" allowfullscreen></iframe>
         <button class="power-button" id="powerButton">電源オフ</button>
-        <div class="keyboard">
+        <button class="light-button" id="lightButton">ライトオン</button>
+        <div class="label">MacBook Air</div> <!-- ここにMacBook Airの文字を表示 -->
+        <div class="keyboard" id="keyboard">
             <!-- キーを全て追加 -->
             <div class="key" data-key="Q">Q</div>
             <div class="key" data-key="W">W</div>
@@ -169,20 +181,20 @@
             <div class="key" data-key="ENTER">Enter</div>
             <div class="key" data-key="SPACE">Space</div>
             <div class="key" data-key="BACKSPACE">Backspace</div>
-            <div class="key" data-key="LIGHT">Light</div> <!-- Lightキーを追加 -->
         </div>
         <div class="speaker"></div>
         <div class="trackpad"></div>
         <div class="display-cable"></div>
-        <div class="label">MacBook Air</div>
     </div>
 
     <script>
         const powerButton = document.getElementById('powerButton');
+        const lightButton = document.getElementById('lightButton');
         const display = document.getElementById('display');
         const macbook = document.getElementById('macbook');
+        const keyboard = document.getElementById('keyboard');
         let isOn = true;
-        let isLightOn = false; // Lightの状態
+        let isLightOn = false; // ライトの状態
 
         powerButton.addEventListener('click', () => {
             if (isOn) {
@@ -197,15 +209,27 @@
             isOn = !isOn;
         });
 
-        // Lightキーのトグル処理
-        document.querySelectorAll('.key').forEach(key => {
-            key.addEventListener('click', (e) => {
-                if (e.target.dataset.key === 'LIGHT') {
-                    isLightOn = !isLightOn;
-                    macbook.classList.toggle('light-on', isLightOn);
-                    document.body.style.backgroundColor = isLightOn ? '#000' : '#e5e5e5'; // 背景色を変更
-                }
-            });
+        lightButton.addEventListener('click', () => {
+            if (isLightOn) {
+                macbook.classList.remove('light-on');
+                lightButton.textContent = 'ライトオン';
+            } else {
+                macbook.classList.add('light-on');
+                lightButton.textContent = 'ライトオフ';
+            }
+            isLightOn = !isLightOn;
+        });
+
+        keyboard.addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('key')) {
+                e.target.style.transform = 'scale(0.9)';
+            }
+        });
+
+        keyboard.addEventListener('mouseup', (e) => {
+            if (e.target.classList.contains('key')) {
+                e.target.style.transform = 'scale(1)';
+            }
         });
     </script>
 </body>
