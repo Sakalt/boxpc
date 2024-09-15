@@ -39,7 +39,7 @@
         }
         .box iframe {
             width: 90%;
-            height: calc(100% - 300px); /* キーボードとMacBook Airの文字の間にディスプレイを合わせる */
+            height: calc(100% - 270px); /* ディスプレイをlabelにぶつかるギリギリまで拡大 */
             border: none;
             border-radius: 15px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -92,13 +92,12 @@
             transition: box-shadow 0.3s;
         }
         .key:active {
-            background-color: #555;
+            background-color: #555; /* アクティブ時の背景色を#555に統一 */
         }
         .light-on .key {
             box-shadow: 0 0 15px 5px white; /* キーの周りに白色の光を追加 */
         }
         .light-on .key:active {
-            background-color: #555; /* ライトオン時のキーアクティブの色変更 */
             box-shadow: 0 0 20px 10px white inset; /* 光がさらに強くなる */
         }
         .speaker, .trackpad, .display-cable {
@@ -120,7 +119,7 @@
         }
         .display-cable {
             width: 12px;
-            height: 190px;
+            height: 120px;
             bottom: 90px;
             background-color: #c0c0c0;
             left: 50%;
@@ -128,9 +127,9 @@
         }
         .label {
             position: absolute;
-            top: calc(100% - 200px); /* キーボードとディスプレイの間に文字を表示 */
+            top: calc(100% - 360px); /* 「MacBook Air」の位置をディスプレイの近くに */
             font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            font-size: 12px;
+            font-size: 16px; /* フォントサイズを16pxに変更 */
             color: #333;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             pointer-events: none; /* 文字がクリックされないようにする */
@@ -146,10 +145,10 @@
 </head>
 <body>
     <div class="box" id="macbook">
-        <iframe id="display" src="https://mhmdmhd6.github.io/Mac-OS-Desktop"></iframe>
+        <iframe id="display" src="https://mhmdmhd6.github.io/Mac-OS-Desktop" allowfullscreen></iframe>
         <button class="power-button" id="powerButton">電源オフ</button>
         <button class="light-button" id="lightButton">ライトオン</button>
-        <div class="label">MacBook Air</div> <!-- ここにMacBook Airの文字を表示 -->
+        <div class="label">MacBook Air</div> <!-- 「MacBook Air」の文字 -->
         <div class="keyboard" id="keyboard">
             <!-- キーを全て追加 -->
             <div class="key" data-key="Q">Q</div>
@@ -194,41 +193,42 @@
         const macbook = document.getElementById('macbook');
         const keyboard = document.getElementById('keyboard');
         let isOn = true;
-        let isLightOn = false; // ライトの状態
+        let isLightOn = false;
 
         powerButton.addEventListener('click', () => {
             if (isOn) {
-                display.style.display = 'none';
                 powerButton.textContent = '電源オン';
                 powerButton.classList.add('off');
+                display.src = '';
             } else {
-                display.style.display = 'block';
                 powerButton.textContent = '電源オフ';
                 powerButton.classList.remove('off');
+                display.src = 'https://mhmdmhd6.github.io/Mac-OS-Desktop';
             }
             isOn = !isOn;
         });
 
         lightButton.addEventListener('click', () => {
             if (isLightOn) {
-                macbook.classList.remove('light-on');
                 lightButton.textContent = 'ライトオン';
+                macbook.classList.remove('light-on');
             } else {
-                macbook.classList.add('light-on');
                 lightButton.textContent = 'ライトオフ';
+                macbook.classList.add('light-on');
             }
             isLightOn = !isLightOn;
         });
 
+        // キーのアクション
         keyboard.addEventListener('mousedown', (e) => {
             if (e.target.classList.contains('key')) {
-                e.target.style.transform = 'scale(0.9)';
+                e.target.classList.add('active');
             }
         });
 
         keyboard.addEventListener('mouseup', (e) => {
             if (e.target.classList.contains('key')) {
-                e.target.style.transform = 'scale(1)';
+                e.target.classList.remove('active');
             }
         });
     </script>
