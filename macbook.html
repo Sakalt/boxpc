@@ -98,7 +98,7 @@
             box-shadow: 0 0 15px 5px white; /* キーの周りに白色の光を追加 */
         }
         .light-on .key:active {
-            background-color: #777; /* ライトオン時のキーアクティブの色変更 */
+            background-color: #555; /* ライトオン時のキーアクティブの色変更 */
             box-shadow: 0 0 20px 10px white inset; /* 光がさらに強くなる */
         }
         .speaker, .trackpad, .display-cable {
@@ -120,7 +120,7 @@
         }
         .display-cable {
             width: 12px;
-            height: 120px;
+            height: 190px;
             bottom: 90px;
             background-color: #c0c0c0;
             left: 50%;
@@ -128,9 +128,9 @@
         }
         .label {
             position: absolute;
-            top: calc(100% - 370px); /* キーボードとディスプレイの間に文字を表示 */
+            top: calc(100% - 200px); /* キーボードとディスプレイの間に文字を表示 */
             font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            font-size: 24px;
+            font-size: 12px;
             color: #333;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             pointer-events: none; /* 文字がクリックされないようにする */
@@ -146,7 +146,7 @@
 </head>
 <body>
     <div class="box" id="macbook">
-        <iframe id="display" src="https://mhmdmhd6.github.io/Mac-OS-Desktop" allowfullscreen></iframe>
+        <iframe id="display" src="https://mhmdmhd6.github.io/Mac-OS-Desktop"></iframe>
         <button class="power-button" id="powerButton">電源オフ</button>
         <button class="light-button" id="lightButton">ライトオン</button>
         <div class="label">MacBook Air</div> <!-- ここにMacBook Airの文字を表示 -->
