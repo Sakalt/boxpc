@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MacBook風PC</title>
     <style>
+        @font-face {
+            font-family: 'San Francisco';
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+            src: local('SF Pro Text Regular'), local('SF Pro Display Regular'), local('San Francisco');
+        }
         body {
             display: flex;
             flex-direction: column;
@@ -13,12 +20,13 @@
             height: 100vh;
             margin: 0;
             background-color: #e5e5e5;
+            font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
         .box {
             width: 80%;
             max-width: 800px;
-            height: 90%;
-            max-height: 800px;
+            height: 95%; /* 高さを少し大きく */
+            max-height: 900px; /* 高さを少し大きく */
             border: 2px solid #c0c0c0;
             background-color: #ffffff;
             border-radius: 20px;
@@ -27,13 +35,15 @@
             flex-direction: column;
             align-items: center;
             position: relative;
+            padding-top: 50px; /* MacBook Airの文字のスペースを確保 */
         }
         .box iframe {
-            width: 100%;
-            height: calc(100% - 160px);
+            width: 90%; /* ディスプレイをボディ内に少し収める */
+            height: calc(100% - 250px); /* 縦スペースを調整 */
             border: none;
             border-radius: 15px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            background-color: #000;
         }
         .power-button {
             position: absolute;
@@ -62,11 +72,12 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             position: absolute;
             bottom: 60px;
+            transition: background-color 0.5s, box-shadow 0.5s;
         }
         .key {
-            background-color: #333; /* 黒いキー */
-            color: #fff; /* 白いテキスト */
-            border: 1px solid #555; /* キーの境界線も少し黒に */
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
             border-radius: 8px;
             padding: 10px;
             text-align: center;
@@ -75,7 +86,11 @@
             font-size: 14px;
         }
         .key:active {
-            background-color: #555; /* 押したときに少し明るい黒に */
+            background-color: #555;
+        }
+        .light-on .keyboard {
+            background-color: #111; /* 背景を暗くする */
+            box-shadow: 0 0 20px rgba(255, 255, 0, 0.8); /* 光を表現 */
         }
         .speaker, .trackpad, .display-cable {
             position: absolute;
@@ -104,9 +119,8 @@
         }
         .label {
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            font-family: 'Helvetica', 'Arial', sans-serif;
+            top: 20px; /* MacBook Airの文字を上に */
+            font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             font-size: 36px;
             color: #333;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
@@ -116,11 +130,12 @@
             margin: 10px;
             padding: 10px;
             font-size: 16px;
+            font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
     </style>
 </head>
 <body>
-    <div class="box">
+    <div class="box" id="macbook">
         <iframe id="display" src="https://mhmdmhd6.github.io/Mac-OS-Desktop" allowfullscreen></iframe>
         <button class="power-button" id="powerButton">電源オフ</button>
         <div class="keyboard">
@@ -154,7 +169,7 @@
             <div class="key" data-key="ENTER">Enter</div>
             <div class="key" data-key="SPACE">Space</div>
             <div class="key" data-key="BACKSPACE">Backspace</div>
-            <!-- 他のキーも追加可能 -->
+            <div class="key" data-key="LIGHT">Light</div> <!-- Lightキーを追加 -->
         </div>
         <div class="speaker"></div>
         <div class="trackpad"></div>
@@ -165,7 +180,9 @@
     <script>
         const powerButton = document.getElementById('powerButton');
         const display = document.getElementById('display');
+        const macbook = document.getElementById('macbook');
         let isOn = true;
+        let isLightOn = false; // Lightの状態
 
         powerButton.addEventListener('click', () => {
             if (isOn) {
@@ -180,35 +197,15 @@
             isOn = !isOn;
         });
 
+        // Lightキーのトグル処理
         document.querySelectorAll('.key').forEach(key => {
-            key.addEventListener('click', () => {
-                const keyValue = key.dataset.key;
-                const event = new KeyboardEvent('keydown', { key: keyValue });
-                document.dispatchEvent(event);
-            });
-        });
-
-        document.addEventListener('keydown', (event) => {
-            const key = event.key.toUpperCase();
-            document.querySelectorAll('.key').forEach(keyElement => {
-                if (keyElement.dataset.key === key) {
-                    keyElement.style.backgroundColor = '#555';
-                    setTimeout(() => {
-                        keyElement.style.backgroundColor = '#333';
-                    }, 100);
+            key.addEventListener('click', (e) => {
+                if (e.target.dataset.key === 'LIGHT') {
+                    isLightOn = !isLightOn;
+                    macbook.classList.toggle('light-on', isLightOn);
+                    document.body.style.backgroundColor = isLightOn ? '#000' : '#e5e5e5'; // 背景色を変更
                 }
             });
-
-            // テキストエリアや入力フォームに文字を挿入
-            const activeElement = document.activeElement;
-            if (activeElement.tagName === 'TEXTAREA' || (activeElement.tagName === 'INPUT' && activeElement.type === 'text')) {
-                const cursorPos = activeElement.selectionStart;
-                const value = activeElement.value;
-                const newValue = value.slice(0, cursorPos) + event.key + value.slice(cursorPos);
-                activeElement.value = newValue;
-                activeElement.selectionStart = cursorPos + 1;
-                activeElement.selectionEnd = cursorPos + 1;
-            }
         });
     </script>
 </body>
