@@ -170,7 +170,6 @@
             align-items: center;
             color: #555;
             font-size: 24px;
-            z-index: 10; /* ゴム足を最前面にする */
         }
         .bottom-side .rubber-foot {
             position: absolute;
@@ -226,6 +225,10 @@
                 <div class="key" data-key="N">N</div>
                 <div class="key" data-key="M">M</div>
             </div>
+            <button class="power-button" id="powerButton">電源</button>
+            <button class="light-button" id="lightButton">ライト</button>
+            <button class="flip-button" id="flipButton">裏返す</button>
+            <button class="close-button" id="closeButton">閉じる</button>
             <div class="speaker"></div>
             <div class="trackpad"></div>
             <div class="display-cable"></div>
@@ -235,12 +238,7 @@
             <div class="rubber-foot tr"></div>
             <div class="rubber-foot bl"></div>
             <div class="rubber-foot br"></div>
-            ゴム足
         </div>
-        <button class="power-button" id="powerButton">電源</button>
-        <button class="light-button" id="lightButton">ライト</button>
-        <button class="flip-button" id="flipButton">裏返す</button>
-        <button class="close-button" id="closeButton">閉じる</button>
     </div>
     <script>
         const macbook = document.getElementById('macbook');
@@ -249,43 +247,41 @@
         const flipButton = document.getElementById('flipButton');
         const closeButton = document.getElementById('closeButton');
         const keyboard = document.getElementById('keyboard');
-        let powerOn = true;
-        let lightOn = false;
+        const display = document.getElementById('display');
+
+        let isOn = true;
         let isFlipped = false;
-        let isClosed = false;
+        let isLightOn = false;
 
-        // 電源ボタンのクリックイベント
         powerButton.addEventListener('click', () => {
-            powerOn = !powerOn;
-            powerButton.textContent = powerOn ? '電源' : '電源オフ';
-            macbook.querySelector('#display').style.display = powerOn ? 'block' : 'none';
-            powerButton.classList.toggle('off', !powerOn);
+            isOn = !isOn;
+            macbook.classList.toggle('closed', !isOn);
+            powerButton.classList.toggle('off', !isOn);
+            if (isOn) {
+                display.src = "https://mhmdmhd6.github.io/Mac-OS-Desktop";
+            } else {
+                display.src = "";
+            }
         });
 
-        // ライトボタンのクリックイベント
         lightButton.addEventListener('click', () => {
-            lightOn = !lightOn;
-            lightButton.textContent = lightOn ? 'ライトオフ' : 'ライト';
-            keyboard.classList.toggle('light-on', lightOn);
+            isLightOn = !isLightOn;
+            document.body.classList.toggle('light-on', isLightOn);
         });
 
-        // 裏返すボタンのクリックイベント
         flipButton.addEventListener('click', () => {
             isFlipped = !isFlipped;
             macbook.classList.toggle('flipped', isFlipped);
         });
 
-        // 閉じるボタンのクリックイベント
         closeButton.addEventListener('click', () => {
-            isClosed = !isClosed;
-            macbook.classList.toggle('closed', isClosed);
+            macbook.classList.add('closed');
+            powerButton.classList.add('off');
         });
 
-        // キーのクリックイベント
-        keyboard.addEventListener('click', (e) => {
-            if (e.target.classList.contains('key')) {
-                const key = e.target.getAttribute('data-key');
-                console.log(`Pressed key: ${key}`);
+        keyboard.addEventListener('click', (event) => {
+            if (event.target.classList.contains('key')) {
+                alert(`キー ${event.target.dataset.key} が押されました`);
             }
         });
     </script>
