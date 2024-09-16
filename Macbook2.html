@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D MacBook Simulator</title>
     <style>
-        body { margin: 0; }
+        body { margin: 0; background-color: #ffffff; } /* 背景を白に設定 */
         canvas { display: block; }
     </style>
 </head>
 <body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/TWEEN.min.js"></script>
 
     <script>
         // シーン、カメラ、レンダラーを作成
@@ -30,7 +29,7 @@
         scene.add(base);
 
         // ディスプレイ部分
-        const screenGeometry = new THREE.BoxGeometry(8, 0.2, 5);
+        const screenGeometry = new THREE.BoxGeometry(7.8, 0.2, 4.8); // 少し小さく調整
         const screenMaterial = new THREE.MeshStandardMaterial({ color: 0x555555 });
         const screen = new THREE.Mesh(screenGeometry, screenMaterial);
         screen.position.set(0, 2.7, -2.5);  // MacBookの開いたディスプレイの位置
@@ -84,14 +83,6 @@
         trackpad.position.set(0, -0.35, 2);
         trackpad.rotation.x = Math.PI / 2;
         scene.add(trackpad);
-
-        // ロゴの追加 (MacBook Bodyの裏)
-        const logoTexture = new THREE.TextureLoader().load('logo.png');
-        const logoMaterial = new THREE.MeshBasicMaterial({ map: logoTexture });
-        const logoGeometry = new THREE.PlaneGeometry(1, 1);
-        const logoMesh = new THREE.Mesh(logoGeometry, logoMaterial);
-        logoMesh.position.set(0, -0.5, -3.1); // ベースの裏側に配置
-        scene.add(logoMesh);
 
         // ライトを追加
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
