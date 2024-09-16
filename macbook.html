@@ -21,6 +21,7 @@
             margin: 0;
             background-color: #e5e5e5;
             font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            perspective: 1000px; /* 3D効果を出すためのperspective */
         }
         .box {
             width: 80%;
@@ -36,6 +37,14 @@
             align-items: center;
             position: relative;
             padding-top: 50px;
+            transition: transform 1s;
+            transform-style: preserve-3d;
+        }
+        .closed {
+            transform: rotateX(90deg); /* 閉じる時に回転するアニメーション */
+        }
+        .flipped {
+            transform: rotateY(180deg); /* 裏返しのアニメーション */
         }
         .box iframe {
             width: 90%;
@@ -45,7 +54,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             background-color: #000;
         }
-        .power-button, .light-button {
+        .power-button, .light-button, .flip-button, .close-button {
             position: absolute;
             top: 10px;
             padding: 10px 20px;
@@ -61,6 +70,12 @@
         }
         .light-button {
             left: 10px;
+        }
+        .flip-button {
+            right: 100px;
+        }
+        .close-button {
+            right: 200px;
         }
         .power-button.off {
             background-color: #ff3b30;
@@ -137,105 +152,135 @@
         .line {
             position: absolute;
             top: calc(100% - 190px); /* ラインの位置を「MacBook Air」の文字より30px下に設定 */
-            width: 800px;
+            width: 750px;
             border-top: 2px solid #333;
         }
-        textarea, input {
-            width: calc(100% - 20px);
-            margin: 10px;
-            padding: 10px;
-            font-size: 16px;
-            font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        .bottom-side {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #d3d3d3;
+            border-radius: 20px;
+            transform: rotateY(180deg);
+            backface-visibility: hidden; /* 裏側の非表示設定 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #555;
+            font-size: 24px;
+        }
+        .bottom-side .rubber-foot {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #666;
+            border-radius: 50%;
+        }
+        .bottom-side .rubber-foot.tl { top: 10px; left: 10px; }
+        .bottom-side .rubber-foot.tr { top: 10px; right: 10px; }
+        .bottom-side .rubber-foot.bl { bottom: 10px; left: 10px; }
+        .bottom-side .rubber-foot.br { bottom: 10px; right: 10px; }
+        .box-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
         }
     </style>
 </head>
 <body>
     <div class="box" id="macbook">
-        <iframe id="display" src="https://mhmdmhd6.github.io/Mac-OS-Desktop" allowfullscreen></iframe>
-        <button class="power-button" id="powerButton">電源オフ</button>
-        <button class="light-button" id="lightButton">ライトオン</button>
-        <div class="label">MacBook Air</div> <!-- 「MacBook Air」の文字 -->
-        <div class="line"></div> <!-- 「MacBook Air」の文字より30px下に引かれた線 -->
-        <div class="keyboard" id="keyboard">
-            <!-- キーを全て追加 -->
-            <div class="key" data-key="Q">Q</div>
-            <div class="key" data-key="W">W</div>
-            <div class="key" data-key="E">E</div>
-            <div class="key" data-key="R">R</div>
-            <div class="key" data-key="T">T</div>
-            <div class="key" data-key="Y">Y</div>
-            <div class="key" data-key="U">U</div>
-            <div class="key" data-key="I">I</div>
-            <div class="key" data-key="O">O</div>
-            <div class="key" data-key="P">P</div>
-            <div class="key" data-key="A">A</div>
-            <div class="key" data-key="S">S</div>
-            <div class="key" data-key="D">D</div>
-            <div class="key" data-key="F">F</div>
-            <div class="key" data-key="G">G</div>
-            <div class="key" data-key="H">H</div>
-            <div class="key" data-key="J">J</div>
-            <div class="key" data-key="K">K</div>
-            <div class="key" data-key="L">L</div>
-            <div class="key" data-key="Z">Z</div>
-            <div class="key" data-key="X">X</div>
-            <div class="key" data-key="C">C</div>
-            <div class="key" data-key="V">V</div>
-            <div class="key" data-key="B">B</div>
-            <div class="key" data-key="N">N</div>
-            <div class="key" data-key="M">M</div>
-            <div class="key" data-key="ENTER">Enter</div>
-            <div class="key" data-key="SPACE">Space</div>
-            <div class="key" data-key="BACKSPACE">Backspace</div>
+        <div class="box-content">
+            <iframe id="display" src="https://mhmdmhd6.github.io/Mac-OS-Desktop" allowfullscreen></iframe>
+            <div class="label">MacBook Air</div>
+            <div class="line"></div>
+            <div class="keyboard" id="keyboard">
+                <!-- キーを全て追加 -->
+                <div class="key" data-key="Q">Q</div>
+                <div class="key" data-key="W">W</div>
+                <div class="key" data-key="E">E</div>
+                <div class="key" data-key="R">R</div>
+                <div class="key" data-key="T">T</div>
+                <div class="key" data-key="Y">Y</div>
+                <div class="key" data-key="U">U</div>
+                <div class="key" data-key="I">I</div>
+                <div class="key" data-key="O">O</div>
+                <div class="key" data-key="P">P</div>
+                <div class="key" data-key="A">A</div>
+                <div class="key" data-key="S">S</div>
+                <div class="key" data-key="D">D</div>
+                <div class="key" data-key="F">F</div>
+                <div class="key" data-key="G">G</div>
+                <div class="key" data-key="H">H</div>
+                <div class="key" data-key="J">J</div>
+                <div class="key" data-key="K">K</div>
+                <div class="key" data-key="L">L</div>
+                <div class="key" data-key="Z">Z</div>
+                <div class="key" data-key="X">X</div>
+                <div class="key" data-key="C">C</div>
+                <div class="key" data-key="V">V</div>
+                <div class="key" data-key="B">B</div>
+                <div class="key" data-key="N">N</div>
+                <div class="key" data-key="M">M</div>
+            </div>
+            <div class="speaker"></div>
+            <div class="trackpad"></div>
+            <div class="display-cable"></div>
+            <div class="bottom-side">
+                <div class="rubber-foot tl"></div>
+                <div class="rubber-foot tr"></div>
+                <div class="rubber-foot bl"></div>
+                <div class="rubber-foot br"></div>
+            </div>
         </div>
-        <div class="speaker"></div>
-        <div class="trackpad"></div>
-        <div class="display-cable"></div>
     </div>
+    <button class="power-button" id="powerButton">電源</button>
+    <button class="light-button" id="lightButton">ライト</button>
+    <button class="flip-button" id="flipButton">裏返す</button>
+    <button class="close-button" id="closeButton">閉じる</button>
 
     <script>
-        const powerButton = document.getElementById('powerButton');
-        const lightButton = document.getElementById('lightButton');
-        const display = document.getElementById('display');
-        const macbook = document.getElementById('macbook');
-        const keyboard = document.getElementById('keyboard');
-        let isOn = true;
-        let isLightOn = false;
-
-        powerButton.addEventListener('click', () => {
-            if (isOn) {
-                powerButton.textContent = '電源オン';
-                powerButton.classList.add('off');
-                display.src = '';
+        document.getElementById('powerButton').addEventListener('click', function() {
+            const box = document.getElementById('macbook');
+            if (this.classList.contains('off')) {
+                this.classList.remove('off');
+                box.classList.remove('light-on');
             } else {
-                powerButton.textContent = '電源オフ';
-                powerButton.classList.remove('off');
-                display.src = 'https://mhmdmhd6.github.io/Mac-OS-Desktop';
-            }
-            isOn = !isOn;
-        });
-
-        lightButton.addEventListener('click', () => {
-            if (isLightOn) {
-                lightButton.textContent = 'ライトオン';
-                macbook.classList.remove('light-on');
-            } else {
-                lightButton.textContent = 'ライトオフ';
-                macbook.classList.add('light-on');
-            }
-            isLightOn = !isLightOn;
-        });
-
-        // キーのアクション
-        keyboard.addEventListener('mousedown', (e) => {
-            if (e.target.classList.contains('key')) {
-                e.target.classList.add('active');
+                this.classList.add('off');
+                box.classList.add('light-on');
             }
         });
 
-        keyboard.addEventListener('mouseup', (e) => {
-            if (e.target.classList.contains('key')) {
-                e.target.classList.remove('active');
+        document.getElementById('lightButton').addEventListener('click', function() {
+            const box = document.getElementById('macbook');
+            box.classList.toggle('light-on');
+        });
+
+        document.getElementById('flipButton').addEventListener('click', function() {
+            const box = document.getElementById('macbook');
+            box.classList.toggle('flipped');
+        });
+
+        document.getElementById('closeButton').addEventListener('click', function() {
+            const box = document.getElementById('macbook');
+            box.classList.toggle('closed');
+        });
+
+        document.addEventListener('keydown', function(event) {
+            const key = event.key.toUpperCase();
+            const keyElement = document.querySelector(`.key[data-key="${key}"]`);
+            if (keyElement) {
+                keyElement.classList.add('active');
+            }
+        });
+
+        document.addEventListener('keyup', function(event) {
+            const key = event.key.toUpperCase();
+            const keyElement = document.querySelector(`.key[data-key="${key}"]`);
+            if (keyElement) {
+                keyElement.classList.remove('active');
             }
         });
     </script>
