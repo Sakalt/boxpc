@@ -23,15 +23,16 @@
             transform-style: preserve-3d;
             transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
             transition: transform 1s;
+            transform-origin: center;
         }
         .screen {
-            width: 100%;
-            height: 75%;
+            width: calc(100% - 12px);
+            height: calc(75% - 12px);
             background: #000;
             border-radius: 5px;
             position: absolute;
             top: 20px;
-            left: 10px;
+            left: 6px;
             overflow: hidden;
             transform: rotateX(-10deg);
             z-index: 1;
@@ -52,9 +53,8 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 0;
             box-sizing: border-box;
+            transform: translateZ(-2px);
         }
-        .base::before,
-        .base::after,
         .base .foot-1,
         .base .foot-2,
         .base .foot-3,
@@ -67,10 +67,10 @@
             height: 12px;
             z-index: 10;
         }
-        .base .foot-1 { bottom: -6px; left: 6px; }
-        .base .foot-2 { bottom: -6px; right: 6px; }
-        .base .foot-3 { top: -6px; left: 6px; }
-        .base .foot-4 { top: -6px; right: 6px; }
+        .base .foot-1 { bottom: -6px; left: -6px; }
+        .base .foot-2 { bottom: -6px; right: -6px; }
+        .base .foot-3 { top: -6px; left: -6px; }
+        .base .foot-4 { top: -6px; right: -6px; }
         .keyboard {
             width: 100%;
             height: 15%;
@@ -140,6 +140,16 @@
             cursor: pointer;
             border-radius: 5px;
         }
+        .logo {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            background: url('logo.png') no-repeat center center;
+            background-size: contain;
+            transform: rotateY(180deg);
+        }
     </style>
 </head>
 <body>
@@ -186,6 +196,7 @@
                 <div class="key" data-key="Enter">Enter</div>
             </div>
             <div class="trackpad"></div>
+            <div class="logo"></div>
         </div>
     </div>
 
@@ -203,12 +214,29 @@
         let keyboard = document.getElementById('keyboard');
         let keys = {};
 
+        // キーイベントリスナー
+        document.addEventListener('keydown', (event) => {
+            if (keys[event.code]) {
+                keys[event.code].classList.add('pressed');
+            }
+        });
+
+        document.addEventListener('keyup', (event) => {
+            if (keys[event.code]) {
+                keys[event.code].classList.remove('pressed');
+            }
+        });
+
         // 回転を開始する関数
         function startRotation(axis) {
             rotateInterval = setInterval(() => {
-                if (axis === 'x') x = (x + 1) % 360;
-                if (axis === 'y') y = (y + 1) % 360;
-                if (axis === 'z') z = (z + 1) % 360;
+                if (axis === 'x') {
+                    x += 1;
+                } else if (axis === 'y') {
+                    y += 1;
+                } else if (axis === 'z') {
+                    z += 1;
+                }
                 macbookBody.style.transform = `rotateX(${x}deg) rotateY(${y}deg) rotateZ(${z}deg)`;
             }, 10);
         }
