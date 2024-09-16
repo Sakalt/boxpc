@@ -72,7 +72,8 @@
             scene.add(foot);
         });
 
-        // キーボード部分 (a-mのキー)
+        // キーボード部分 (a-mのキー + EnterとBackspace)
+        const keyMeshes = {};
         function createKeyboard() {
             const keyGeometry = new THREE.BoxGeometry(0.4, 0.05, 0.4); // キーのサイズ
             const keyMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
@@ -87,13 +88,27 @@
             keyLayout.forEach(row => {
                 let x = -2; // X軸の位置調整
                 for (let i = 0; i < row.length; i++) {
+                    const char = row[i];
                     const key = new THREE.Mesh(keyGeometry, keyMaterial);
                     key.position.set(x, y, 0.2); // 位置設定
                     scene.add(key);
+                    keyMeshes[char.toUpperCase()] = key; // キーを登録
                     x += 0.5; // 次のキーの位置
                 }
                 y -= 0.5; // 次の行の位置
             });
+
+            // Enterキー
+            const enterKey = new THREE.Mesh(keyGeometry, keyMaterial);
+            enterKey.position.set(2.5, -0.4, 0.2);
+            scene.add(enterKey);
+            keyMeshes["Enter"] = enterKey;
+
+            // Backspaceキー
+            const backspaceKey = new THREE.Mesh(keyGeometry, keyMaterial);
+            backspaceKey.position.set(3, 0.6, 0.2);
+            scene.add(backspaceKey);
+            keyMeshes["Backspace"] = backspaceKey;
         }
         createKeyboard();
 
@@ -136,6 +151,15 @@
         document.getElementById('rotateZ').addEventListener('click', () => {
             base.rotation.z += Math.PI / 8;
             screen.rotation.z += Math.PI / 8;
+        });
+
+        // 実際のキー押下と連動させる
+        document.addEventListener('keydown', (event) => {
+            const key = event.key.toUpperCase();
+            if (keyMeshes[key]) {
+                keyMeshes[key].position.y -= 0.1; // キーを押し込む
+                setTimeout(() => keyMeshes[key].position.y += 0.1, 100); // キーを戻す
+            }
         });
 
         // レンダリング
