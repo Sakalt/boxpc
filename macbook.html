@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MacBook風PC</title>
+    <title>MacBook風PC 3D</title>
     <style>
         @font-face {
             font-family: 'San Francisco';
@@ -21,33 +21,57 @@
             margin: 0;
             background-color: #e5e5e5;
             font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            perspective: 1500px; /* 3D効果のための視点の設定 */
         }
-        .box {
+        .macbook {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 80%;
             max-width: 800px;
             height: 95%;
             max-height: 900px;
-            border: 2px solid #c0c0c0;
             background-color: #e3e3e3;
+            border: 2px solid #c0c0c0;
             border-radius: 20px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transform-style: preserve-3d; /* 3D変換のためのスタイル設定 */
+            transform: rotateX(10deg) rotateY(10deg); /* 初期の3D角度設定 */
+            transition: transform 0.5s; /* 3D変換のトランジション設定 */
+        }
+        .macbook:hover {
+            transform: rotateX(0deg) rotateY(0deg); /* ホバー時の3D角度設定 */
+        }
+        .screen {
+            width: 100%;
+            height: calc(100% - 120px); /* 操作部分の高さを差し引く */
+            background-color: #000;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .screen iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .controls {
+            width: 100%;
+            height: 120px;
+            background-color: #e3e3e3;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
-            padding-top: 50px;
-        }
-        .box iframe {
-            width: 90%;
-            height: calc(100% - 192px); /* ディスプレイの高さを少し拡大 */
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            background-color: #000;
+            padding: 10px;
+            box-sizing: border-box;
         }
         .power-button, .light-button, .close-button {
-            position: absolute;
-            top: 10px;
+            margin: 5px;
             padding: 10px 20px;
             background-color: #007aff;
             color: white;
@@ -55,20 +79,20 @@
             border-radius: 10px;
             cursor: pointer;
             font-size: 16px;
-        }
-        .power-button {
-            right: 10px;
-        }
-        .light-button {
-            left: 10px;
-        }
-        .close-button {
-            top: 60px;
-            right: 10px;
-            background-color: #ff3b30;
+            transform: perspective(1500px) rotateX(0deg) rotateY(0deg); /* 3D効果のための設定 */
+            transition: transform 0.3s; /* ボタンの3D変換のトランジション設定 */
         }
         .power-button.off {
             background-color: #ff3b30;
+        }
+        .light-button {
+            background-color: #ffcc00;
+        }
+        .close-button {
+            background-color: #ff3b30;
+        }
+        .power-button:hover, .light-button:hover, .close-button:hover {
+            transform: perspective(1500px) rotateX(-10deg) rotateY(-10deg); /* ホバー時の3D効果 */
         }
         .keyboard {
             display: grid;
@@ -81,8 +105,9 @@
             border-radius: 15px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             position: absolute;
-            bottom: 60px;
-            transition: background-color 0.5s, box-shadow 0.5s;
+            bottom: 10px;
+            transform-style: preserve-3d; /* 3D変換のためのスタイル設定 */
+            transform: rotateX(0deg) rotateY(0deg); /* 初期の3D角度設定 */
         }
         .key {
             background-color: #333;
@@ -94,17 +119,18 @@
             cursor: pointer;
             user-select: none;
             font-size: 14px;
-            transition: box-shadow 0.3s;
+            transition: box-shadow 0.3s, transform 0.3s; /* 3D効果のトランジション設定 */
         }
         .key.active {
-            background-color: #555; /* アクティブ時の背景色を#555に統一 */
-            box-shadow: 0 0 15px 5px white; /* キーの周りに白色の光を追加 */
+            background-color: #555;
+            box-shadow: 0 0 15px 5px white;
+            transform: perspective(1500px) translateZ(10px); /* 3Dアクティブ化効果 */
         }
         .light-on .key {
-            box-shadow: 0 0 15px 5px white; /* キーの周りに白色の光を追加 */
+            box-shadow: 0 0 15px 5px white;
         }
         .light-on .key:active {
-            box-shadow: 0 0 15px 5px white inset; /* 光がさらに強くなる */
+            box-shadow: 0 0 15px 5px white inset;
         }
         .speaker, .trackpad, .display-cable, .foot {
             position: absolute;
@@ -114,7 +140,7 @@
         .speaker {
             width: 60px;
             height: 20px;
-            bottom: 90px;
+            bottom: 140px;
             background-color: #c0c0c0;
         }
         .trackpad {
@@ -126,7 +152,7 @@
         .display-cable {
             width: 12px;
             height: 120px;
-            bottom: 90px;
+            bottom: 140px;
             background-color: #c0c0c0;
             left: 50%;
             transform: translateX(-50%);
@@ -139,67 +165,55 @@
         }
         .label {
             position: absolute;
-            top: calc(100% - 200px); /* 「MacBook Air」の位置をディスプレイの近くに */
+            top: calc(100% - 200px);
             font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            font-size: 16px; /* フォントサイズを16pxに変更 */
+            font-size: 16px;
             color: #333;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-            pointer-events: none; /* 文字がクリックされないようにする */
-        }
-        textarea, input {
-            width: calc(100% - 20px);
-            margin: 10px;
-            padding: 10px;
-            font-size: 16px;
-            font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <div class="box" id="macbook">
-        <iframe id="display" src="https://mhmdmhd6.github.io/Mac-OS-Desktop" allowfullscreen></iframe>
-        <button class="power-button" id="powerButton">電源オフ</button>
-        <button class="light-button" id="lightButton">ライトオン</button>
-        <button class="close-button" id="closeButton">閉じる</button>
-        <div class="label">MacBook Air</div>
-        <div class="keyboard" id="keyboard">
-            <!-- キーを全て追加 -->
-            <div class="key" data-key="Q">Q</div>
-            <div class="key" data-key="W">W</div>
-            <div class="key" data-key="E">E</div>
-            <div class="key" data-key="R">R</div>
-            <div class="key" data-key="T">T</div>
-            <div class="key" data-key="Y">Y</div>
-            <div class="key" data-key="U">U</div>
-            <div class="key" data-key="I">I</div>
-            <div class="key" data-key="O">O</div>
-            <div class="key" data-key="P">P</div>
-            <div class="key" data-key="A">A</div>
-            <div class="key" data-key="S">S</div>
-            <div class="key" data-key="D">D</div>
-            <div class="key" data-key="F">F</div>
-            <div class="key" data-key="G">G</div>
-            <div class="key" data-key="H">H</div>
-            <div class="key" data-key="J">J</div>
-            <div class="key" data-key="K">K</div>
-            <div class="key" data-key="L">L</div>
-            <div class="key" data-key="Z">Z</div>
-            <div class="key" data-key="X">X</div>
-            <div class="key" data-key="C">C</div>
-            <div class="key" data-key="V">V</div>
-            <div class="key" data-key="B">B</div>
-            <div class="key" data-key="N">N</div>
-            <div class="key" data-key="M">M</div>
-            <div class="key" data-key="ENTER">Enter</div>
-            <div class="key" data-key="SPACE">Space</div>
-            <div class="key" data-key="BACKSPACE">Backspace</div>
+    <div class="macbook">
+        <div class="screen">
+            <iframe id="display" src="https://mhmdmhd6.github.io/Mac-OS-Desktop" allowfullscreen></iframe>
         </div>
-        <div class="speaker"></div>
-        <div class="trackpad"></div>
-        <div class="display-cable"></div>
-        <div class="foot"></div>
+        <div class="controls">
+            <button class="power-button" id="powerButton">電源オフ</button>
+            <button class="light-button" id="lightButton">ライトオン</button>
+            <button class="close-button" id="closeButton">閉じる</button>
+            <div class="keyboard" id="keyboard">
+                <!-- キーを全て追加 -->
+                <div class="key" data-key="Q">Q</div>
+                <div class="key" data-key="W">W</div>
+                <div class="key" data-key="E">E</div>
+                <div class="key" data-key="R">R</div>
+                <div class="key" data-key="T">T</div>
+                <div class="key" data-key="Y">Y</div>
+                <div class="key" data-key="U">U</div>
+                <div class="key" data-key="I">I</div>
+                <div class="key" data-key="O">O</div>
+                <div class="key" data-key="P">P</div>
+                <div class="key" data-key="A">A</div>
+                <div class="key" data-key="S">S</div>
+                <div class="key" data-key="D">D</div>
+                <div class="key" data-key="F">F</div>
+                <div class="key" data-key="G">G</div>
+                <div class="key" data-key="H">H</div>
+                <div class="key" data-key="J">J</div>
+                <div class="key" data-key="K">K</div>
+                <div class="key" data-key="L">L</div>
+                <div class="key" data-key="Z">Z</div>
+                <div class="key" data-key="X">X</div>
+                <div class="key" data-key="C">C</div>
+                <div class="key" data-key="V">V</div>
+                <div class="key" data-key="B">B</div>
+                <div class="key" data-key="N">N</div>
+                <div class="key" data-key="M">M</div>
+            </div>
+        </div>
     </div>
-
     <script>
         const powerButton = document.getElementById('powerButton');
         const lightButton = document.getElementById('lightButton');
