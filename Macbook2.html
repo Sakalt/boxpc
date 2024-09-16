@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D MacBook Simulation</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+        .macbook {
+            width: 800px;
+            height: 600px;
+            perspective: 1000px;
+            margin: 50px auto;
+        }
+        .macbook-body {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+            transition: transform 1s;
+        }
+        .screen {
+            width: 100%;
+            height: 75%;
+            background: #000;
+            border-radius: 5px;
+            position: absolute;
+            top: 20px;
+            left: 10px;
+            overflow: hidden;
+            transform: rotateX(-10deg);
+            z-index: 1;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .base {
+            width: 100%;
+            height: 20%;
+            background: #e3e3e3;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 0;
+            box-sizing: border-box;
+        }
+        .base::before,
+        .base::after,
+        .base .foot-1,
+        .base .foot-2,
+        .base .foot-3,
+        .base .foot-4 {
+            content: '';
+            position: absolute;
+            background: #333;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            z-index: 10;
+        }
+        .base .foot-1 { bottom: -6px; left: 6px; }
+        .base .foot-2 { bottom: -6px; right: 6px; }
+        .base .foot-3 { top: -6px; left: 6px; }
+        .base .foot-4 { top: -6px; right: 6px; }
+        .keyboard {
+            width: 100%;
+            height: 15%;
+            background: #e3e3e3;
+            position: absolute;
+            bottom: 20%;
+            left: 0;
+            border-radius: 0 0 5px 5px;
+            display: grid;
+            grid-template-columns: repeat(14, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 5px;
+            padding: 5px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .key {
+            background: #c0c0c0;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            height: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .key.pressed {
+            background: #a0a0a0;
+        }
+        .key::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: calc(100% + 10px);
+            height: calc(100% + 10px);
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            z-index: -1;
+        }
+        .trackpad {
+            width: 20%;
+            height: 10%;
+            background: #c0c0c0;
+            position: absolute;
+            bottom: 5%;
+            left: 40%;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .rotate-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .rotate-button {
+            width: 30px;
+            height: 30px;
+            background: #e3e3e3;
+            border: 1px solid #ccc;
+            margin: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="macbook" id="macbook">
+        <div class="macbook-body" id="macbookBody">
+            <div class="screen">
+                <iframe src="https://mhmdmhd6.github.io/Mac-OS-Desktop" title="MacBook Screen"></iframe>
+            </div>
+            <div class="base">
+                <div class="foot-1"></div>
+                <div class="foot-2"></div>
+                <div class="foot-3"></div>
+                <div class="foot-4"></div>
+            </div>
+            <div class="keyboard" id="keyboard">
+                <!-- キーの追加 -->
+                <div class="key" data-key="KeyQ">Q</div>
+                <div class="key" data-key="KeyW">W</div>
+                <div class="key" data-key="KeyE">E</div>
+                <div class="key" data-key="KeyR">R</div>
+                <div class="key" data-key="KeyT">T</div>
+                <div class="key" data-key="KeyY">Y</div>
+                <div class="key" data-key="KeyU">U</div>
+                <div class="key" data-key="KeyI">I</div>
+                <div class="key" data-key="KeyO">O</div>
+                <div class="key" data-key="KeyP">P</div>
+                <div class="key" data-key="KeyA">A</div>
+                <div class="key" data-key="KeyS">S</div>
+                <div class="key" data-key="KeyD">D</div>
+                <div class="key" data-key="KeyF">F</div>
+                <div class="key" data-key="KeyG">G</div>
+                <div class="key" data-key="KeyH">H</div>
+                <div class="key" data-key="KeyJ">J</div>
+                <div class="key" data-key="KeyK">K</div>
+                <div class="key" data-key="KeyL">L</div>
+                <div class="key" data-key="KeyZ">Z</div>
+                <div class="key" data-key="KeyX">X</div>
+                <div class="key" data-key="KeyC">C</div>
+                <div class="key" data-key="KeyV">V</div>
+                <div class="key" data-key="KeyB">B</div>
+                <div class="key" data-key="KeyN">N</div>
+                <div class="key" data-key="KeyM">M</div>
+                <div class="key" data-key="Backspace">Backspace</div>
+                <div class="key" data-key="Enter">Enter</div>
+            </div>
+            <div class="trackpad"></div>
+        </div>
+    </div>
+
+    <!-- 回転ボタン -->
+    <div class="rotate-buttons">
+        <div class="rotate-button" id="rotateX">X</div>
+        <div class="rotate-button" id="rotateY">Y</div>
+        <div class="rotate-button" id="rotateZ">Z</div>
+    </div>
+
+    <script>
+        let x = 0, y = 0, z = 0;
+        let macbookBody = document.getElementById('macbookBody');
+        let rotateInterval;
+        let keyboard = document.getElementById('keyboard');
+        let keys = {};
+
+        // 回転を開始する関数
+        function startRotation(axis) {
+            rotateInterval = setInterval(() => {
+                if (axis === 'x') x = (x + 1) % 360;
+                if (axis === 'y') y = (y + 1) % 360;
+                if (axis === 'z') z = (z + 1) % 360;
+                macbookBody.style.transform = `rotateX(${x}deg) rotateY(${y}deg) rotateZ(${z}deg)`;
+            }, 10);
+        }
+
+        // 回転を停止する関数
+        function stopRotation() {
+            clearInterval(rotateInterval);
+        }
+
+        document.getElementById('rotateX').addEventListener('mousedown', () => startRotation('x'));
+        document.getElementById('rotateX').addEventListener('mouseup', stopRotation);
+        document.getElementById('rotateY').addEventListener('mousedown', () => startRotation('y'));
+        document.getElementById('rotateY').addEventListener('mouseup', stopRotation);
+        document.getElementById('rotateZ').addEventListener('mousedown', () => startRotation('z'));
+        document.getElementById('rotateZ').addEventListener('mouseup', stopRotation);
+
+        // キーの追加イベントリスナー
+        document.querySelectorAll('.key').forEach(key => {
+            keys[key.dataset.key] = key;
+            key.addEventListener('mousedown', () => key.classList.add('pressed'));
+            key.addEventListener('mouseup', () => key.classList.remove('pressed'));
+        });
+    </script>
+</body>
+</html>
