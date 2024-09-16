@@ -127,12 +127,18 @@
         }
         .label {
             position: absolute;
-            top: calc(100% - 200px); /* 「MacBook Air」の位置をディスプレイの近くに */
+            top: calc(100% - 220px); /* 「MacBook Air」の位置をディスプレイの近くに */
             font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             font-size: 16px; /* フォントサイズを16pxに変更 */
             color: #333;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
             pointer-events: none; /* 文字がクリックされないようにする */
+        }
+        .line {
+            position: absolute;
+            top: calc(100% - 190px); /* ラインの位置を「MacBook Air」の文字より30px下に設定 */
+            width: 80%;
+            border-top: 2px solid #333;
         }
         textarea, input {
             width: calc(100% - 20px);
@@ -149,6 +155,7 @@
         <button class="power-button" id="powerButton">電源オフ</button>
         <button class="light-button" id="lightButton">ライトオン</button>
         <div class="label">MacBook Air</div> <!-- 「MacBook Air」の文字 -->
+        <div class="line"></div> <!-- 「MacBook Air」の文字より30px下に引かれた線 -->
         <div class="keyboard" id="keyboard">
             <!-- キーを全て追加 -->
             <div class="key" data-key="Q">Q</div>
