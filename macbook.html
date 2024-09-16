@@ -3,298 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MacBook風PC</title>
+    <title>3D MacBook Simulation</title>
     <style>
-        @font-face {
-            font-family: 'San Francisco';
-            font-weight: 400;
-            font-style: normal;
-            font-display: swap;
-            src: local('SF Pro Text Regular'), local('SF Pro Display Regular'), local('San Francisco');
-        }
         body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
-            background-color: #e5e5e5;
-            font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow: hidden;
+            background: #f0f0f0;
         }
-        .box {
-            width: 80%;
-            max-width: 800px;
-            height: 95%;
-            max-height: 900px;
-            border: 2px solid #c0c0c0;
-            background-color: #e3e3e3;
-            border-radius: 20px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            padding-top: 50px;
-            transition: transform 0.5s; /* スムーズな切り替えのためのトランジション */
+        .macbook {
+            width: 800px;
+            height: 600px;
+            perspective: 2000px; /* 奥行きを強調 */
+            margin: 50px auto;
         }
-        .box.bottom {
-            transform: rotateX(180deg); /* 裏返し時の回転 */
-        }
-        .box iframe {
-            width: 90%;
-            height: calc(100% - 192px);
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            background-color: #000;
-        }
-        .power-button, .light-button, .flip-button {
-            position: absolute;
-            top: 10px;
-            padding: 10px 20px;
-            background-color: #007aff;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .power-button {
-            right: 10px;
-        }
-        .light-button {
-            left: 10px;
-        }
-        .flip-button {
-            bottom: 10px;
-            left: 10px;
-        }
-        .power-button.off {
-            background-color: #ff3b30;
-        }
-        .keyboard {
-            display: grid;
-            grid-template-columns: repeat(15, 1fr);
-            gap: 5px;
-            width: calc(100% - 20px);
-            max-width: 700px;
-            background-color: #e3e3e3;
-            padding: 10px;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            position: absolute;
-            bottom: 60px;
-            transition: background-color 0.5s, box-shadow 0.5s;
-        }
-        .key {
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #555;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            user-select: none;
-            font-size: 14px;
-            transition: box-shadow 0.3s;
-        }
-        .key:active {
-            background-color: #555;
-        }
-        .light-on .key {
-            box-shadow: 0 0 15px 5px white;
-        }
-        .light-on .key:active {
-            box-shadow: 0 0 15px 5px white inset;
-        }
-        .speaker, .trackpad, .display-cable, .rubber-foot {
-            position: absolute;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-        }
-        .speaker {
-            width: 60px;
-            height: 20px;
-            bottom: 90px;
-            background-color: #c0c0c0;
-        }
-        .trackpad {
-            width: 120px;
-            height: 80px;
-            bottom: 10px;
-            background-color: #c0c0c0;
-        }
-        .display-cable {
-            width: 12px;
-            height: 120px;
-            bottom: 90px;
-            background-color: #c0c0c0;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .label {
-            position: absolute;
-            top: calc(100% - 220px);
-            font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            font-size: 16px;
-            color: #333;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-            pointer-events: none;
-        }
-        .line {
-            position: absolute;
-            top: calc(100% - 190px);
-            width: 80%;
-            border-top: 2px solid #333;
-        }
-        .bottom-content {
-            display: none; /* 初期は底面を非表示 */
-            position: absolute;
-            bottom: 0;
+        .macbook-body {
             width: 100%;
             height: 100%;
-            background-color: #e3e3e3;
-            border-radius: 20px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+            transition: transform 1s;
+            transform-origin: center;
+        }
+        .screen {
+            width: 80%;
+            height: 70%;
+            background: #000;
+            border-radius: 5px;
+            position: absolute;
+            top: 0;
+            left: 10%;
+            overflow: hidden;
+            transform: rotateX(-10deg) translateZ(10px); /* 3D的に少し前に出す */
+            z-index: 2;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .base {
+            width: 100%;
+            height: 20%;
+            background: #e3e3e3;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: rotateX(90deg) translateZ(-20px); /* 立体的に見えるよう回転 */
+            z-index: 1;
+        }
+        .keyboard {
+            width: 80%;
+            height: 15%;
+            background: #e3e3e3;
+            position: absolute;
+            bottom: 20%;
+            left: 10%;
+            border-radius: 5px;
+            display: grid;
+            grid-template-columns: repeat(14, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 5px;
+            padding: 5px;
+        }
+        
+        .key {
+            background: #c0c0c0;
+            border-radius: 3px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            position: relative;
+            height: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transform: translateZ(5px); /* 各キーが5px飛び出す */
         }
-        .bottom-content .rubber-foot {
-            width: 20px;
-            height: 20px;
-            background-color: #333;
+        .key.pressed {
+            background: #a0a0a0;
+        }
+        .trackpad {
+            width: 20%;
+            height: 10%;
+            background: #c0c0c0;
             position: absolute;
-            bottom: 10px;
-            border-radius: 50%;
+            bottom: 5%;
+            left: 40%;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transform: translateZ(2px); /* 少し飛び出す */
         }
-        .bottom-content .rubber-foot:nth-child(1) {
-            left: 10px;
+        .rotate-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
         }
-        .bottom-content .rubber-foot:nth-child(2) {
-            right: 10px;
+        .rotate-button {
+            width: 30px;
+            height: 30px;
+            background: #e3e3e3;
+            border: 1px solid #ccc;
+            margin: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 5px;
         }
-        .bottom-content .rubber-foot:nth-child(3) {
-            left: 10px;
-            transform: translateY(100%);
-        }
-        .bottom-content .rubber-foot:nth-child(4) {
-            right: 10px;
-            transform: translateY(100%);
-        }
-        textarea, input {
-            width: calc(100% - 20px);
-            margin: 10px;
-            padding: 10px;
-            font-size: 16px;
-            font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        .logo {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            background: url('logo.png') no-repeat center center;
+            background-size: contain;
+            transform: rotateY(180deg) translateZ(-2px); /* ロゴを裏に配置 */
         }
     </style>
 </head>
 <body>
-    <div class="box" id="macbook">
-        <iframe id="display" src="https://mhmdmhd6.github.io/Mac-OS-Desktop" allowfullscreen></iframe>
-        <button class="power-button" id="powerButton">電源オフ</button>
-        <button class="light-button" id="lightButton">ライトオン</button>
-        <button class="flip-button" id="flipButton">裏返す</button>
-        <div class="label">MacBook Air</div>
-        <div class="line"></div>
-        <div class="keyboard" id="keyboard">
-            <div class="key" data-key="Q">Q</div>
-            <div class="key" data-key="W">W</div>
-            <div class="key" data-key="E">E</div>
-            <div class="key" data-key="R">R</div>
-            <div class="key" data-key="T">T</div>
-            <div class="key" data-key="Y">Y</div>
-            <div class="key" data-key="U">U</div>
-            <div class="key" data-key="I">I</div>
-            <div class="key" data-key="O">O</div>
-            <div class="key" data-key="P">P</div>
-            <div class="key" data-key="A">A</div>
-            <div class="key" data-key="S">S</div>
-            <div class="key" data-key="D">D</div>
-            <div class="key" data-key="F">F</div>
-            <div class="key" data-key="G">G</div>
-            <div class="key" data-key="H">H</div>
-            <div class="key" data-key="J">J</div>
-            <div class="key" data-key="K">K</div>
-            <div class="key" data-key="L">L</div>
-            <div class="key" data-key="Z">Z</div>
-            <div class="key" data-key="X">X</div>
-            <div class="key" data-key="C">C</div>
-            <div class="key" data-key="V">V</div>
-            <div class="key" data-key="B">B</div>
-            <div class="key" data-key="N">N</div>
-            <div class="key" data-key="M">M</div>
-        </div>
-        <div class="bottom-content">
-            <div class="rubber-foot"></div>
-            <div class="rubber-foot"></div>
-            <div class="rubber-foot"></div>
-            <div class="rubber-foot"></div>
+    <div class="macbook" id="macbook">
+        <div class="macbook-body" id="macbookBody">
+            <div class="screen">
+                <iframe src="https://mhmdmhd6.github.io/Mac-OS-Desktop" title="MacBook Screen"></iframe>
+            </div>
+            <div class="base">
+                <div class="foot-1"></div>
+                <div class="foot-2"></div>
+                <div class="foot-3"></div>
+                <div class="foot-4"></div>
+            </div>
+            <div class="keyboard" id="keyboard">
+                <!-- キーの追加 -->
+                <div class="key" data-key="KeyQ">Q</div>
+                <div class="key" data-key="KeyW">W</div>
+                <div class="key" data-key="KeyE">E</div>
+                <div class="key" data-key="KeyR">R</div>
+                <div class="key" data-key="KeyT">T</div>
+                <div class="key" data-key="KeyY">Y</div>
+                <div class="key" data-key="KeyU">U</div>
+                <div class="key" data-key="KeyI">I</div>
+                <div class="key" data-key="KeyO">O</div>
+                <div class="key" data-key="KeyP">P</div>
+                <div class="key" data-key="KeyA">A</div>
+                <div class="key" data-key="KeyS">S</div>
+                <div class="key" data-key="KeyD">D</div>
+                <div class="key" data-key="KeyF">F</div>
+                <div class="key" data-key="KeyG">G</div>
+                <div class="key" data-key="KeyH">H</div>
+                <div class="key" data-key="KeyJ">J</div>
+                <div class="key" data-key="KeyK">K</div>
+                <div class="key" data-key="KeyL">L</div>
+                <div class="key" data-key="KeyZ">Z</div>
+                <div class="key" data-key="KeyX">X</div>
+                <div class="key" data-key="KeyC">C</div>
+                <div class="key" data-key="KeyV">V</div>
+                <div class="key" data-key="KeyB">B</div>
+                <div class="key" data-key="KeyN">N</div>
+                <div class="key" data-key="KeyM">M</div>
+                <div class="key" data-key="Backspace">Backspace</div>
+                <div class="key" data-key="Enter">Enter</div>
+            </div>
+            <div class="trackpad"></div>
+            <div class="logo"></div>
         </div>
     </div>
+
+    <!-- 回転ボタン -->
+    <div class="rotate-buttons">
+        <div class="rotate-button" id="rotateX">X</div>
+        <div class="rotate-button" id="rotateY">Y</div>
+        <div class="rotate-button" id="rotateZ">Z</div>
+    </div>
+
     <script>
-        const powerButton = document.getElementById('powerButton');
-        const lightButton = document.getElementById('lightButton');
-        const flipButton = document.getElementById('flipButton');
-        const display = document.getElementById('display');
-        const macbook = document.getElementById('macbook');
-        const keyboard = document.getElementById('keyboard');
-        const bottomContent = document.querySelector('.bottom-content');
-        let isOn = true;
-        let isLightOn = false;
-        let isFlipped = false;
+        let x = 0, y = 0, z = 0;
+        let macbookBody = document.getElementById('macbookBody');
+        let rotateInterval;
+        let keyboard = document.getElementById('keyboard');
+        let keys = {};
 
-        powerButton.addEventListener('click', () => {
-            if (isOn) {
-                powerButton.textContent = '電源オン';
-                powerButton.classList.add('off');
-                display.src = '';
-            } else {
-                powerButton.textContent = '電源オフ';
-                powerButton.classList.remove('off');
-                display.src = 'https://mhmdmhd6.github.io/Mac-OS-Desktop';
-            }
-            isOn = !isOn;
-        });
-
-        lightButton.addEventListener('click', () => {
-            if (isLightOn) {
-                lightButton.textContent = 'ライトオン';
-                macbook.classList.remove('light-on');
-            } else {
-                lightButton.textContent = 'ライトオフ';
-                macbook.classList.add('light-on');
-            }
-            isLightOn = !isLightOn;
-        });
-
-        flipButton.addEventListener('click', () => {
-            if (isFlipped) {
-                macbook.classList.remove('bottom');
-                bottomContent.style.display = 'none';
-                flipButton.textContent = '裏返す';
-            } else {
-                macbook.classList.add('bottom');
-                bottomContent.style.display = 'flex';
-                flipButton.textContent = '元に戻す';
-            }
-            isFlipped = !isFlipped;
-        });
-
-        keyboard.addEventListener('mousedown', (e) => {
-            if (e.target.classList.contains('key')) {
-                e.target.classList.add('active');
+        // キーイベントリスナー
+        document.addEventListener('keydown', (event) => {
+            if (keys[event.code]) {
+                keys[event.code].classList.add('pressed');
             }
         });
 
-        keyboard.addEventListener('mouseup', (e) => {
-            if (e.target.classList.contains('key')) {
-                e.target.classList.remove('active');
+        document.addEventListener('keyup', (event) => {
+            if (keys[event.code]) {
+                keys[event.code].classList.remove('pressed');
             }
+        });
+
+        // 回転を開始する関数
+        function startRotation(axis) {
+            rotateInterval = setInterval(() => {
+                if (axis === 'x') {
+                    x += 1;
+                } else if (axis === 'y') {
+                    y += 1;
+                } else if (axis === 'z') {
+                    z += 1;
+                }
+                macbookBody.style.transform = `rotateX(${x}deg) rotateY(${y}deg) rotateZ(${z}deg)`;
+            }, 10);
+        }
+
+        // 回転を停止する関数
+        function stopRotation() {
+            clearInterval(rotateInterval);
+        }
+
+        document.getElementById('rotateX').addEventListener('mousedown', () => startRotation('x'));
+        document.getElementById('rotateX').addEventListener('mouseup', stopRotation);
+        document.getElementById('rotateY').addEventListener('mousedown', () => startRotation('y'));
+        document.getElementById('rotateY').addEventListener('mouseup', stopRotation);
+        document.getElementById('rotateZ').addEventListener('mousedown', () => startRotation('z'));
+        document.getElementById('rotateZ').addEventListener('mouseup', stopRotation);
+
+        // キーの追加イベントリスナー
+        document.querySelectorAll('.key').forEach(key => {
+            keys[key.dataset.key] = key;
+            key.addEventListener('mousedown', () => key.classList.add('pressed'));
+            key.addEventListener('mouseup', () => key.classList.remove('pressed'));
         });
     </script>
 </body>
