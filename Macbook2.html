@@ -246,11 +246,11 @@
             if (rotateInterval) return; // 既に回転中なら無視
             rotateInterval = setInterval(() => {
                 if (axis === 'x') {
-                    x += 1;
+                    x += 45;
                 } else if (axis === 'y') {
-                    y += 1;
+                    y += 45;
                 } else if (axis === 'z') {
-                    z += 1;
+                    z += 45;
                 }
                 macbookBody.style.transform = `rotateX(${x}deg) rotateY(${y}deg) rotateZ(${z}deg)`;
             }, 10);
