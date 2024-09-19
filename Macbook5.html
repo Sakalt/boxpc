@@ -23,7 +23,7 @@
         <button id="rotateZ">Z軸回転</button>
     </div>
 
-    <!-- three.js と OrbitControls を cdn.jsdelivr から読み込む -->
+    <!-- three.js, OrbitControls, and CSS3DRenderer を読み込む -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS3DRenderer.js"></script>
@@ -32,12 +32,13 @@
         // シーン、カメラ、レンダラーを作成
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setClearColor(0xffffff); // 背景を白に設定
         document.body.appendChild(renderer.domElement);
 
-        // CSS3DRendererを追加
+        // CSS3DRendererのセットアップ
         const cssRenderer = new THREE.CSS3DRenderer();
         cssRenderer.setSize(window.innerWidth, window.innerHeight);
         cssRenderer.domElement.style.position = 'absolute';
@@ -63,13 +64,13 @@
         screen.rotation.x = Math.PI / 4;
         macbookGroup.add(screen);
 
-        // CSS3DObjectを作成してiframeを追加
+        // iframeをスクリーンに合わせる
         const iframeElement = document.createElement('iframe');
         iframeElement.src = "https://mhmdmhd6.github.io/Mac-OS-Desktop";
         iframeElement.style.width = '780px'; // ディスプレイに合わせてサイズ調整
-        iframeElement.style.height = '480px'; // ディスプレイに合わせてサイズ調整
+        iframeElement.style.height = '480px';
         iframeElement.style.border = 'none';
-        
+
         const cssObject = new THREE.CSS3DObject(iframeElement);
         cssObject.position.set(0, 2.7, -2.5);
         cssObject.rotation.x = Math.PI / 4;
@@ -94,54 +95,6 @@
             foot.position.set(...pos);
             macbookGroup.add(foot);
         });
-
-        // キーボードの文字追加
-        const keyMeshes = {};
-        function createKeyboard() {
-            const keyGeometry = new THREE.BoxGeometry(0.4, 0.05, 0.4); // キーのサイズ
-            const keyMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
-
-            const keyLayout = [
-                "QWERTYUIOP", 
-                "ASDFGHJKL", 
-                "ZXCVBNM"
-            ];
-
-            let y = 0.1; // Y軸の位置調整
-            keyLayout.forEach(row => {
-                let x = -2; // X軸の位置調整
-                for (let i = 0; i < row.length; i++) {
-                    const char = row[i];
-                    const key = new THREE.Mesh(keyGeometry, keyMaterial);
-                    key.position.set(x, y, 0.2); // 位置設定
-                    macbookGroup.add(key);
-                    keyMeshes[char.toUpperCase()] = key; // キーを登録
-                    x += 0.5; // 次のキーの位置
-                }
-                y -= 0.5; // 次の行の位置
-            });
-
-            // Enterキー
-            const enterKey = new THREE.Mesh(keyGeometry, keyMaterial);
-            enterKey.position.set(2.5, -0.4, 0.2);
-            macbookGroup.add(enterKey);
-            keyMeshes["Enter"] = enterKey;
-
-            // Backspaceキー
-            const backspaceKey = new THREE.Mesh(keyGeometry, keyMaterial);
-            backspaceKey.position.set(3, 0.6, 0.2);
-            macbookGroup.add(backspaceKey);
-            keyMeshes["Backspace"] = backspaceKey;
-        }
-        createKeyboard();
-
-        // トラックパッド
-        const trackpadGeometry = new THREE.PlaneGeometry(2, 1.5);
-        const trackpadMaterial = new THREE.MeshStandardMaterial({ color: 0xaaaaaa });
-        const trackpad = new THREE.Mesh(trackpadGeometry, trackpadMaterial);
-        trackpad.position.set(0, -0.35, 2);
-        trackpad.rotation.x = Math.PI / 2;
-        macbookGroup.add(trackpad);
 
         // ライト
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
