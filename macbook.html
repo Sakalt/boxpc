@@ -42,7 +42,8 @@
         base.position.y = -0.25;
         scene.add(base);
 
-        // MacBookのロゴ
+        // MacBookのロゴ (一時的にコメントアウト、後で画像のパスを確認)
+        /*
         const textureLoader = new THREE.TextureLoader();
         const logoTexture = textureLoader.load('logo.png');  // 正しいロゴパスを使用
         const logoMaterial = new THREE.MeshBasicMaterial({ map: logoTexture });
@@ -51,6 +52,7 @@
         logo.position.set(0, -0.26, 0);
         logo.rotation.x = -Math.PI / 2; // ベースの裏に配置
         scene.add(logo);
+        */
 
         // ディスプレイ部分
         const screenGeometry = new THREE.BoxGeometry(7.8, 0.2, 4.8); // 少し小さく調整
