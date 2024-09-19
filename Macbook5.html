@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D MacBook Simulator</title>
+    <title>3D MacBookシミュレータ</title>
     <style>
         body { margin: 0; background-color: #ffffff; } /* 背景を白に設定 */
         canvas { display: block; }
@@ -23,27 +23,18 @@
         <button id="rotateZ">Z軸回転</button>
     </div>
 
-    <!-- three.js, OrbitControls, and CSS3DRenderer を読み込む -->
+    <!-- three.js と OrbitControls を cdn.jsdelivr から読み込む -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS3DRenderer.js"></script>
 
     <script>
         // シーン、カメラ、レンダラーを作成
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setClearColor(0xffffff); // 背景を白に設定
         document.body.appendChild(renderer.domElement);
-
-        // CSS3DRendererのセットアップ
-        const cssRenderer = new THREE.CSS3DRenderer();
-        cssRenderer.setSize(window.innerWidth, window.innerHeight);
-        cssRenderer.domElement.style.position = 'absolute';
-        cssRenderer.domElement.style.top = '0';
-        document.body.appendChild(cssRenderer.domElement);
 
         // MacBook全体のグループを作成
         const macbookGroup = new THREE.Group();
@@ -64,17 +55,18 @@
         screen.rotation.x = Math.PI / 4;
         macbookGroup.add(screen);
 
-        // iframeをスクリーンに合わせる
+        // ディスプレイにiframeを表示
         const iframeElement = document.createElement('iframe');
         iframeElement.src = "https://mhmdmhd6.github.io/Mac-OS-Desktop";
+        iframeElement.style.position = 'absolute';
         iframeElement.style.width = '780px'; // ディスプレイに合わせてサイズ調整
-        iframeElement.style.height = '480px';
+        iframeElement.style.height = '480px'; // ディスプレイに合わせてサイズ調整
         iframeElement.style.border = 'none';
-
-        const cssObject = new THREE.CSS3DObject(iframeElement);
-        cssObject.position.set(0, 2.7, -2.5);
-        cssObject.rotation.x = Math.PI / 4;
-        macbookGroup.add(cssObject);
+        iframeElement.style.left = '50%';
+        iframeElement.style.top = '50%';
+        iframeElement.style.transform = 'translate(-50%, -50%)';
+        iframeElement.style.pointerEvents = 'none'; // マウスイベントを無効化して干渉しないように
+        document.body.appendChild(iframeElement);
 
         // キーボード部分
         const keyboardGeometry = new THREE.BoxGeometry(7.8, 0.2, 4.8);
@@ -96,6 +88,54 @@
             macbookGroup.add(foot);
         });
 
+        // キーボードの文字追加
+        const keyMeshes = {};
+        function createKeyboard() {
+            const keyGeometry = new THREE.BoxGeometry(0.4, 0.05, 0.4); // キーのサイズ
+            const keyMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+
+            const keyLayout = [
+                "QWERTYUIOP", 
+                "ASDFGHJKL", 
+                "ZXCVBNM"
+            ];
+
+            let y = 0.1; // Y軸の位置調整
+            keyLayout.forEach(row => {
+                let x = -2; // X軸の位置調整
+                for (let i = 0; i < row.length; i++) {
+                    const char = row[i];
+                    const key = new THREE.Mesh(keyGeometry, keyMaterial);
+                    key.position.set(x, y, 0.2); // 位置設定
+                    macbookGroup.add(key);
+                    keyMeshes[char.toUpperCase()] = key; // キーを登録
+                    x += 0.5; // 次のキーの位置
+                }
+                y -= 0.5; // 次の行の位置
+            });
+
+            // Enterキー
+            const enterKey = new THREE.Mesh(keyGeometry, keyMaterial);
+            enterKey.position.set(2.5, -0.4, 0.2);
+            macbookGroup.add(enterKey);
+            keyMeshes["Enter"] = enterKey;
+
+            // Backspaceキー
+            const backspaceKey = new THREE.Mesh(keyGeometry, keyMaterial);
+            backspaceKey.position.set(3, 0.6, 0.2);
+            macbookGroup.add(backspaceKey);
+            keyMeshes["Backspace"] = backspaceKey;
+        }
+        createKeyboard();
+
+        // トラックパッド
+        const trackpadGeometry = new THREE.PlaneGeometry(2, 1.5);
+        const trackpadMaterial = new THREE.MeshStandardMaterial({ color: 0xaaaaaa });
+        const trackpad = new THREE.Mesh(trackpadGeometry, trackpadMaterial);
+        trackpad.position.set(0, -0.35, 2);
+        trackpad.rotation.x = Math.PI / 2;
+        macbookGroup.add(trackpad);
+
         // ライト
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         scene.add(ambientLight);
@@ -112,6 +152,85 @@
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
         controls.enableZoom = true;
+
+        // マウスドラッグまたはタッチで回転させる処理
+        let isDragging = false;
+        let previousMousePosition = {
+            x: 0,
+            y: 0
+        };
+
+        function onMouseMove(event) {
+            if (!isDragging) return;
+
+            let deltaMove = {
+                x: event.clientX - previousMousePosition.x,
+                y: event.clientY - previousMousePosition.y
+            };
+
+            macbookGroup.rotation.y += deltaMove.x * 0.005;
+            macbookGroup.rotation.x += deltaMove.y * 0.005;
+
+            previousMousePosition = {
+                x: event.clientX,
+                y: event.clientY
+            };
+        }
+
+        function onMouseDown(event) {
+            isDragging = true;
+            previousMousePosition = {
+                x: event.clientX,
+                y: event.clientY
+            };
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+        }
+
+        // スワイプ用のタッチイベント
+        function onTouchMove(event) {
+            if (event.touches.length === 1) {
+                let touch = event.touches[0];
+                let deltaMove = {
+                    x: touch.clientX - previousMousePosition.x,
+                    y: touch.clientY - previousMousePosition.y
+                };
+
+                macbookGroup.rotation.y += deltaMove.x * 0.005;
+                macbookGroup.rotation.x += deltaMove.y * 0.005;
+
+                previousMousePosition = {
+                    x: touch.clientX,
+                    y: touch.clientY
+                };
+            }
+        }
+
+        function onTouchStart(event) {
+            if (event.touches.length === 1) {
+                let touch = event.touches[0];
+                isDragging = true;
+                previousMousePosition = {
+                    x: touch.clientX,
+                    y: touch.clientY
+                };
+            }
+        }
+
+        function onTouchEnd() {
+            isDragging = false;
+        }
+
+        // イベントリスナーを追加
+        document.addEventListener('mousedown', onMouseDown, false);
+        document.addEventListener('mousemove', onMouseMove, false);
+        document.addEventListener('mouseup', onMouseUp, false);
+
+        document.addEventListener('touchstart', onTouchStart, false);
+        document.addEventListener('touchmove', onTouchMove, false);
+        document.addEventListener('touchend', onTouchEnd, false);
 
         // MacBook全体を回転
         document.getElementById('rotateX').addEventListener('click', () => {
@@ -131,7 +250,6 @@
             requestAnimationFrame(animate);
             controls.update();
             renderer.render(scene, camera);
-            cssRenderer.render(scene, camera);
         }
         animate();
     </script>
