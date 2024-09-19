@@ -14,6 +14,17 @@
             display: flex;
             gap: 10px;
         }
+        #iframeContainer {
+            position: absolute;
+            width: 780px; /* ディスプレイに合わせたサイズ */
+            height: 480px; /* ディスプレイに合わせたサイズ */
+            overflow: hidden;
+            border: none;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none; /* iframeの干渉を防ぐ */
+        }
     </style>
 </head>
 <body>
@@ -21,6 +32,9 @@
         <button id="rotateX">X軸回転</button>
         <button id="rotateY">Y軸回転</button>
         <button id="rotateZ">Z軸回転</button>
+    </div>
+    <div id="iframeContainer">
+        <iframe id="macbookIframe" src="https://mhmdmhd6.github.io/Mac-OS-Desktop"></iframe>
     </div>
 
     <!-- three.js と OrbitControls を cdn.jsdelivr から読み込む -->
@@ -42,7 +56,7 @@
 
         // MacBookのベース部分
         const baseGeometry = new THREE.BoxGeometry(8, 0.5, 5);
-        const baseMaterial = new THREE.MeshStandardMaterial({ color: 0xe3e3e3 });
+        const baseMaterial = new THREE.MeshStandardMaterial({ color: 0xd3d3d3 }); // 薄灰色
         const base = new THREE.Mesh(baseGeometry, baseMaterial);
         base.position.y = -0.25;
         macbookGroup.add(base);
@@ -54,19 +68,6 @@
         screen.position.set(0, 2.7, -2.5);
         screen.rotation.x = Math.PI / 4;
         macbookGroup.add(screen);
-
-        // ディスプレイにiframeを表示
-        const iframeElement = document.createElement('iframe');
-        iframeElement.src = "https://mhmdmhd6.github.io/Mac-OS-Desktop";
-        iframeElement.style.position = 'absolute';
-        iframeElement.style.width = '780px'; // ディスプレイに合わせてサイズ調整
-        iframeElement.style.height = '480px'; // ディスプレイに合わせてサイズ調整
-        iframeElement.style.border = 'none';
-        iframeElement.style.left = '50%';
-        iframeElement.style.top = '50%';
-        iframeElement.style.transform = 'translate(-50%, -50%)';
-        iframeElement.style.pointerEvents = 'none'; // マウスイベントを無効化して干渉しないように
-        document.body.appendChild(iframeElement);
 
         // キーボード部分
         const keyboardGeometry = new THREE.BoxGeometry(7.8, 0.2, 4.8);
