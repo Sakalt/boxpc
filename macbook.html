@@ -36,32 +36,43 @@
         renderer.setClearColor(0xffffff); // 背景を白に設定
         document.body.appendChild(renderer.domElement);
 
+        // MacBook全体のグループを作成
+        const macbookGroup = new THREE.Group();
+        scene.add(macbookGroup);
+
         // MacBookのベース部分
         const baseGeometry = new THREE.BoxGeometry(8, 0.5, 5);
         const baseMaterial = new THREE.MeshStandardMaterial({ color: 0xe3e3e3 });
         const base = new THREE.Mesh(baseGeometry, baseMaterial);
         base.position.y = -0.25;
-        scene.add(base);
-
-        // MacBookのロゴ (一時的にコメントアウト、後で画像のパスを確認)
-        /*
-        const textureLoader = new THREE.TextureLoader();
-        const logoTexture = textureLoader.load('logo.png');  // 正しいロゴパスを使用
-        const logoMaterial = new THREE.MeshBasicMaterial({ map: logoTexture });
-        const logoGeometry = new THREE.PlaneGeometry(1.5, 1.5);
-        const logo = new THREE.Mesh(logoGeometry, logoMaterial);
-        logo.position.set(0, -0.26, 0);
-        logo.rotation.x = -Math.PI / 2; // ベースの裏に配置
-        scene.add(logo);
-        */
+        macbookGroup.add(base);
 
         // ディスプレイ部分
-        const screenGeometry = new THREE.BoxGeometry(7.8, 0.2, 4.8); // 少し小さく調整
+        const screenGeometry = new THREE.BoxGeometry(7.8, 0.2, 4.8);
         const screenMaterial = new THREE.MeshStandardMaterial({ color: 0x555555 });
         const screen = new THREE.Mesh(screenGeometry, screenMaterial);
         screen.position.set(0, 2.7, -2.5);
         screen.rotation.x = Math.PI / 4;
-        scene.add(screen);
+        macbookGroup.add(screen);
+
+        // ディスプレイにiframeを表示
+        const iframeElement = document.createElement('iframe');
+        iframeElement.src = "https://mhmdmhd6.github.io/Mac-OS-Desktop";
+        iframeElement.style.position = 'absolute';
+        iframeElement.style.width = '780px'; // ディスプレイに合わせてサイズ調整
+        iframeElement.style.height = '480px'; // ディスプレイに合わせてサイズ調整
+        iframeElement.style.border = 'none';
+        iframeElement.style.left = '50%';
+        iframeElement.style.top = '50%';
+        iframeElement.style.transform = 'translate(-50%, -50%)';
+        document.body.appendChild(iframeElement);
+
+        // キーボード部分
+        const keyboardGeometry = new THREE.BoxGeometry(7.8, 0.2, 4.8);
+        const keyboardMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+        const keyboard = new THREE.Mesh(keyboardGeometry, keyboardMaterial);
+        keyboard.position.set(0, -0.05, 2.5);
+        macbookGroup.add(keyboard);
 
         // ゴム足をベースの四隅に追加
         const footGeometry = new THREE.CylinderGeometry(0.15, 0.15, 0.05, 32);
@@ -73,10 +84,10 @@
         footPositions.forEach(pos => {
             const foot = new THREE.Mesh(footGeometry, footMaterial);
             foot.position.set(...pos);
-            scene.add(foot);
+            macbookGroup.add(foot);
         });
 
-        // キーボード部分 (a-mのキー + EnterとBackspace)
+        // キーボードの文字追加
         const keyMeshes = {};
         function createKeyboard() {
             const keyGeometry = new THREE.BoxGeometry(0.4, 0.05, 0.4); // キーのサイズ
@@ -95,7 +106,7 @@
                     const char = row[i];
                     const key = new THREE.Mesh(keyGeometry, keyMaterial);
                     key.position.set(x, y, 0.2); // 位置設定
-                    scene.add(key);
+                    macbookGroup.add(key);
                     keyMeshes[char.toUpperCase()] = key; // キーを登録
                     x += 0.5; // 次のキーの位置
                 }
@@ -105,13 +116,13 @@
             // Enterキー
             const enterKey = new THREE.Mesh(keyGeometry, keyMaterial);
             enterKey.position.set(2.5, -0.4, 0.2);
-            scene.add(enterKey);
+            macbookGroup.add(enterKey);
             keyMeshes["Enter"] = enterKey;
 
             // Backspaceキー
             const backspaceKey = new THREE.Mesh(keyGeometry, keyMaterial);
             backspaceKey.position.set(3, 0.6, 0.2);
-            scene.add(backspaceKey);
+            macbookGroup.add(backspaceKey);
             keyMeshes["Backspace"] = backspaceKey;
         }
         createKeyboard();
@@ -122,7 +133,7 @@
         const trackpad = new THREE.Mesh(trackpadGeometry, trackpadMaterial);
         trackpad.position.set(0, -0.35, 2);
         trackpad.rotation.x = Math.PI / 2;
-        scene.add(trackpad);
+        macbookGroup.add(trackpad);
 
         // ライト
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -141,29 +152,17 @@
         controls.dampingFactor = 0.05;
         controls.enableZoom = true;
 
-        // 回転ボタンの実装
+        // MacBook全体を回転
         document.getElementById('rotateX').addEventListener('click', () => {
-            base.rotation.x += Math.PI / 8;
-            screen.rotation.x += Math.PI / 8;
+            macbookGroup.rotation.x += Math.PI / 8;
         });
 
         document.getElementById('rotateY').addEventListener('click', () => {
-            base.rotation.y += Math.PI / 8;
-            screen.rotation.y += Math.PI / 8;
+            macbookGroup.rotation.y += Math.PI / 8;
         });
 
         document.getElementById('rotateZ').addEventListener('click', () => {
-            base.rotation.z += Math.PI / 8;
-            screen.rotation.z += Math.PI / 8;
-        });
-
-        // 実際のキー押下と連動させる
-        document.addEventListener('keydown', (event) => {
-            const key = event.key.toUpperCase();
-            if (keyMeshes[key]) {
-                keyMeshes[key].position.y -= 0.1; // キーを押し込む
-                setTimeout(() => keyMeshes[key].position.y += 0.1, 100); // キーを戻す
-            }
+            macbookGroup.rotation.z += Math.PI / 8;
         });
 
         // レンダリング
