@@ -170,6 +170,7 @@
             align-items: center;
             color: #555;
             font-size: 24px;
+            z-index: 10; /* ゴム足を最前面にする */
         }
         .bottom-side .rubber-foot {
             position: absolute;
@@ -228,59 +229,63 @@
             <div class="speaker"></div>
             <div class="trackpad"></div>
             <div class="display-cable"></div>
-            <div class="bottom-side">
-                <div class="rubber-foot tl"></div>
-                <div class="rubber-foot tr"></div>
-                <div class="rubber-foot bl"></div>
-                <div class="rubber-foot br"></div>
-            </div>
         </div>
+        <div class="bottom-side">
+            <div class="rubber-foot tl"></div>
+            <div class="rubber-foot tr"></div>
+            <div class="rubber-foot bl"></div>
+            <div class="rubber-foot br"></div>
+            ゴム足
+        </div>
+        <button class="power-button" id="powerButton">電源</button>
+        <button class="light-button" id="lightButton">ライト</button>
+        <button class="flip-button" id="flipButton">裏返す</button>
+        <button class="close-button" id="closeButton">閉じる</button>
     </div>
-    <button class="power-button" id="powerButton">電源</button>
-    <button class="light-button" id="lightButton">ライト</button>
-    <button class="flip-button" id="flipButton">裏返す</button>
-    <button class="close-button" id="closeButton">閉じる</button>
-
     <script>
-        document.getElementById('powerButton').addEventListener('click', function() {
-            const box = document.getElementById('macbook');
-            if (this.classList.contains('off')) {
-                this.classList.remove('off');
-                box.classList.remove('light-on');
-            } else {
-                this.classList.add('off');
-                box.classList.add('light-on');
-            }
+        const macbook = document.getElementById('macbook');
+        const powerButton = document.getElementById('powerButton');
+        const lightButton = document.getElementById('lightButton');
+        const flipButton = document.getElementById('flipButton');
+        const closeButton = document.getElementById('closeButton');
+        const keyboard = document.getElementById('keyboard');
+        let powerOn = true;
+        let lightOn = false;
+        let isFlipped = false;
+        let isClosed = false;
+
+        // 電源ボタンのクリックイベント
+        powerButton.addEventListener('click', () => {
+            powerOn = !powerOn;
+            powerButton.textContent = powerOn ? '電源' : '電源オフ';
+            macbook.querySelector('#display').style.display = powerOn ? 'block' : 'none';
+            powerButton.classList.toggle('off', !powerOn);
         });
 
-        document.getElementById('lightButton').addEventListener('click', function() {
-            const box = document.getElementById('macbook');
-            box.classList.toggle('light-on');
+        // ライトボタンのクリックイベント
+        lightButton.addEventListener('click', () => {
+            lightOn = !lightOn;
+            lightButton.textContent = lightOn ? 'ライトオフ' : 'ライト';
+            keyboard.classList.toggle('light-on', lightOn);
         });
 
-        document.getElementById('flipButton').addEventListener('click', function() {
-            const box = document.getElementById('macbook');
-            box.classList.toggle('flipped');
+        // 裏返すボタンのクリックイベント
+        flipButton.addEventListener('click', () => {
+            isFlipped = !isFlipped;
+            macbook.classList.toggle('flipped', isFlipped);
         });
 
-        document.getElementById('closeButton').addEventListener('click', function() {
-            const box = document.getElementById('macbook');
-            box.classList.toggle('closed');
+        // 閉じるボタンのクリックイベント
+        closeButton.addEventListener('click', () => {
+            isClosed = !isClosed;
+            macbook.classList.toggle('closed', isClosed);
         });
 
-        document.addEventListener('keydown', function(event) {
-            const key = event.key.toUpperCase();
-            const keyElement = document.querySelector(`.key[data-key="${key}"]`);
-            if (keyElement) {
-                keyElement.classList.add('active');
-            }
-        });
-
-        document.addEventListener('keyup', function(event) {
-            const key = event.key.toUpperCase();
-            const keyElement = document.querySelector(`.key[data-key="${key}"]`);
-            if (keyElement) {
-                keyElement.classList.remove('active');
+        // キーのクリックイベント
+        keyboard.addEventListener('click', (e) => {
+            if (e.target.classList.contains('key')) {
+                const key = e.target.getAttribute('data-key');
+                console.log(`Pressed key: ${key}`);
             }
         });
     </script>
