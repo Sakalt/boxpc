@@ -76,19 +76,6 @@
         keyboard.position.set(0, -0.05, 2.5);
         macbookGroup.add(keyboard);
 
-        // ゴム足をベースの四隅に追加
-        const footGeometry = new THREE.CylinderGeometry(0.15, 0.15, 0.05, 32);
-        const footMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
-        const footPositions = [
-            [-3.5, -0.55, 2.5], [3.5, -0.55, 2.5], 
-            [-3.5, -0.55, -2.5], [3.5, -0.55, -2.5]
-        ];
-        footPositions.forEach(pos => {
-            const foot = new THREE.Mesh(footGeometry, footMaterial);
-            foot.position.set(...pos);
-            macbookGroup.add(foot);
-        });
-
         // キーボードの文字追加
         const keyMeshes = {};
         function createKeyboard() {
@@ -103,16 +90,16 @@
 
             let y = 0.1; // Y軸の位置調整
             keyLayout.forEach(row => {
-                let x = -2; // X軸の位置調整
+                let x = -2.8; // X軸の位置調整
                 for (let i = 0; i < row.length; i++) {
                     const char = row[i];
                     const key = new THREE.Mesh(keyGeometry, keyMaterial);
                     key.position.set(x, y, 0.2); // 位置設定
                     macbookGroup.add(key);
                     keyMeshes[char.toUpperCase()] = key; // キーを登録
-                    x += 0.5; // 次のキーの位置
+                    x += 0.6; // 次のキーの位置
                 }
-                y -= 0.5; // 次の行の位置
+                y -= 0.6; // 次の行の位置
             });
 
             // Enterキー
@@ -123,7 +110,7 @@
 
             // Backspaceキー
             const backspaceKey = new THREE.Mesh(keyGeometry, keyMaterial);
-            backspaceKey.position.set(3, 0.6, 0.2);
+            backspaceKey.position.set(3.1, 0.6, 0.2);
             macbookGroup.add(backspaceKey);
             keyMeshes["Backspace"] = backspaceKey;
         }
@@ -136,6 +123,14 @@
         trackpad.position.set(0, -0.35, 2);
         trackpad.rotation.x = Math.PI / 2;
         macbookGroup.add(trackpad);
+
+        // ヒンジ部分
+        const hingeGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1, 32);
+        const hingeMaterial = new THREE.MeshStandardMaterial({ color: 0x888888 });
+        const hinge = new THREE.Mesh(hingeGeometry, hingeMaterial);
+        hinge.rotation.z = Math.PI / 2; // ヒンジを立てる
+        hinge.position.set(0, 1.5, -2.6); // ヒンジの位置調整
+        macbookGroup.add(hinge);
 
         // ライト
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
